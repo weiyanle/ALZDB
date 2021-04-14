@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}
+404 - ALZDB
+{% endblock %}
+{% block main %}
+    <!--========== SLIDER ==========-->
+    <div class="promo-block" style="background: url({{ url_for('static', filename='img/background.png') }}) ;background-size: 100%;padding: 120px 0 10px;">
+        <h1 class="promo-block-title" style="font-size: 50px;text-align: left;padding-left: 50px">404 Not Found.</h1>
+    </div>
+    <div class="headeradd">
+        <a href="/"><b>HOME</b></a>
+    </div>
+{%endblock%}

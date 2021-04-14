@@ -1,0 +1,417 @@
+{% extends "base.html" %}
+{% block title %}
+Meta Analysis|{{tissue}} - ALZDB
+{% endblock %}
+{% block main %}
+<div class="promo-block" style="background: url({{ url_for('static', filename='img/background.png') }}) ;background-size: 100%;padding: 120px 0 10px;">
+    <h1 class="promo-block-title" style="font-size: 50px;text-align: left;padding-left: 50px;">Meta Analysis —— {{tissue}}</h1>
+</div>
+<ul class="navbaradd">
+    {% if tissue=='FC' %}
+    <li><a class="left"><b>Frontal Cortex</b></a></li>
+    {% elif tissue=='HI' %}
+    <li><a class="left"><b>Hippocampus</b></a></li>
+    {% elif tissue=='TC' %}
+    <li><a class="left"><b>Temporal Cortex</b></a></li>
+    {% endif %}
+    <li><a href="/meta/{{tissue}}/index=1/0" {% if dir1|int==1 %} class="active" {% endif %}><b>Info</b></a></li>
+    <li><a href="/meta/{{tissue}}/index=2/0" {% if dir1|int==2 %} class="active" {% endif %}><b>MetaClust</b></a></li>
+    <li><a href="/meta/{{tissue}}/index=3/0" {% if dir1|int==3 %} class="active" {% endif %}><b>MetaDE</b></a></li>
+    <li><a href="/meta/{{tissue}}/index=4/0" {% if dir1|int==4 %} class="active" {% endif %}><b>MetaPCA</b></a></li>
+    <li><a href="/meta/{{tissue}}/index=5/0" {% if dir1|int==5 %} class="active" {% endif %}><b>MetaQC</b></a></li>
+    <div class="dropdownadd">
+        <a class="dropbtnadd" {% if dir1|int==6 %}style="background-color: #eaeaea;color: black;" {% endif %}><b>MetaNetwork</b></a>
+        <div class="dropdownadd-content">
+            <div class="dropdownadd2">
+                 <a href="/meta/{{tissue}}/index=6/1" class="dropbtnadd2">Basic modules figures weight 100</a>
+            </div>
+            <div class="dropdownadd2">
+                <a href="/meta/{{tissue}}/index=6/2" class="dropbtnadd2">Basic modules figures weight 200</a>
+            </div>
+            <div class="dropdownadd2">
+                <a href="/meta/{{tissue}}/index=6/3" class="dropbtnadd2">Basic modules figures weight 300</a>
+            </div>
+            <div class="dropdownadd2">
+                <a href="/meta/{{tissue}}/index=6/4" class="dropbtnadd2">Basic modules figures weight 400</a>
+            </div>
+            <div class="dropdownadd2">
+                <a href="/meta/{{tissue}}/index=6/5" class="dropbtnadd2">Basic modules figures weight 500</a>
+            </div>
+            <div class="dropdownadd2">
+                <a href="/meta/{{tissue}}/index=6/6" class="dropbtnadd2">Basic modules figures weight 600</a>
+            </div>
+            <div class="dropdownadd2">
+                <a href="/meta/{{tissue}}/index=6/7" class="dropbtnadd2">Basic modules figures weight 700</a>
+            </div>
+        </div>
+    </div>
+    <div class="dropdownadd">
+        <a class="dropbtnadd" {% if dir1|int==7 %}style="background-color: #eaeaea;color: black;" {% endif %}><b>MetaPath</b></a>
+        <div class="dropdownadd-content">
+            <div class="dropdownadd2">
+                <a href="/meta/{{tissue}}/index=7/1">Table</a>
+            </div>
+            <div class="dropdownadd2">
+                <a href="/meta/{{tissue}}/index=7/2">Heatmaps</a>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+    <li id="navbarright"><a href="/miRNA"><b>Choose Tissue</b></a></li>
+</ul>
+<div>
+    {% if dir1 =='1' %}
+    <div class="panel-note col-md-8 col-md-offset-2">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-file" aria-hidden="true" ></span> Page Introduction</h3>
+            </div>
+            <div class="panel-body" style="font-size: 15px;">
+                ​​This page collects the time, source, purpose, and methodology of the current series. Most of the information comes from NCBI statistics. With the information provided on this page, you can easily contact the original author of this study. In particular, the grouping of samples is also on this page at the bottom of the page, which shows the names of the different groups and the number of differential genes obtained by comparison between the groups.
+            </div>
+        </div>
+    </div>
+    <div class="container" style="margin-top: 30px;">
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1" style="padding: 20px;">
+                <div class="sumtext">
+                    {% if tissue=='FC' %}
+                    <h3>Brief Introduction</h3>
+                    <p>Frontal cortex(FC) is often referred to as the command and control center of the brain. Higher levels of thinking, such as decision making and self-control, are here. The loss of nerve cells and synapses in AD patients is very obvious, and the loss of neurons in the frontal lobe is unique to AD. However, the accidental factors of a single study are relatively high, the persuasion is not strong, and it is easy to be interfered by various kinds, so the reference is of little significance. Therefore, we collected almost all the original data of mRNA expression chips in various databases which are related to FC and AD, and conducted meta-analysis among these independent researches to eliminate batch effect and accidental error. The results of differential gene research with more biological significance.</p>
+                    <h3>Data Source</h3>
+                    <p>The data we collected was from GEO dataset, all of which were related to Alzheimer disease for HI tissue studies. There were 3 groups of studies and 67 samples. After data collection and quality control, a total of 3405 genes were meta-analyzed.</p>
+                    <h3>Summary of Results</h3>
+                    <p>A total of 745 significantly expressed genes were screened (both P values <0.05 and FDR<0.1).</p>
+                    <p>To see more detailed results of this meta-analysis, select and view separately from the navigation bar.</p>
+                    {% elif tissue=='HI' %}
+                    <h3>Brief Introduction</h3>
+                    <p>Hippocampus(HI) is an important organ involved in learning and memory storage in the central nervous system. Therefore, in the research process of Alzheimer disease, the hippocampus has become one of the research hotspots. However, the accidental factors of a single study are relatively high, the persuasion is not strong, and it is easy to be interfered by various kinds, so the reference is of little significance. Therefore, we collected almost all the original data of mRNA expression chips in various databases which are related to HI and AD, and conducted meta-analysis among these independent researches to eliminate batch effect and accidental error. The results of differential gene research with more biological significance.</p>
+                    <h3>Data Source</h3>
+                    <p>The data we collected was from GEO dataset, all of which were related to Alzheimer disease for HI tissue studies. There were 4 groups of studies and 120 samples. After data collection and quality control, a total of 3405 genes were meta-analyzed.</p>
+                    <h3>Summary of Results</h3>
+                    <p>A total of 816 significantly expressed genes were screened (both P values <0.05 and FDR<0.1).</p>
+                    <p>To see more detailed results of this meta-analysis, select and view separately from the navigation bar.</p>
+                    {% elif tissue=='TC' %}
+                    <h3>Brief Introduction</h3>
+                    <p>The pathological features of AD are plaque structure caused by extracellular β-amyloid protein deposition and neurofibrillary tangles caused by intracellular hyperphosphorylated tau. Temporal cortex(TC) is its common deposition site. However, the accidental factors of a single study are relatively high, the persuasion is not strong, and it is easy to be interfered by various kinds, so the reference is of little significance. Therefore, we collected almost all the original data of mRNA expression chips in various databases which are related to FC and AD, and conducted meta-analysis among these independent researches to eliminate batch effect and accidental error. The results of differential gene research with more biological significance.</p>
+                    <h3>Data Source</h3>
+                    <p>The data we collected was from GEO dataset, all of which were related to Alzheimer disease for HI tissue studies. There were 4 groups of studies and 179 samples. After data collection and quality control, a total of 16876 genes were meta-analyzed.</p>
+                    <h3>Summary of Results</h3>
+                    <p>A total of 1768 significantly expressed genes were screened (both P values <0.05 and FDR<0.1).</p>
+                    <p>To see more detailed results of this meta-analysis, select and view separately from the navigation bar.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% elif dir1=='2' %}
+    <h1 style="text-align: center;padding: 50px;">MetaClust Results</h1>
+        <div class="panel-note col-md-8 col-md-offset-2">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-file" aria-hidden="true" ></span> Page Introduction</h3>
+            </div>
+            <div class="panel-body" style="font-size: 15px;">
+                ​​MetaClust aims to perform sample clustering analysis combining multiple transcriptomic studies. By integrating information from multiple studies of similar biological purposes, MetaClust can identify a unified intrinsic gene set among all studies, perform weighted clustering analysis using the common intrinsic gene set, and match the clustering patterns across studies to define disease subtypes/cluster types. The resulting clustering from meta-analysis is more robust and accurate than single study analysis.<br><br>
+                ​The heatmap on top shows the gene-expression profiles of the three studies with selected features. Each row represents a gene, and each column represents a sample. Note that the three studies share a common set of genes. The color bar on top of the heatmap represents the subtype labels. For instance, the black bar on top of each study represents the same subtype for all studies. Clearly, we could see distinct subtype patterns, and these patterns are consistent across studies.
+            </div>
+        </div>
+    </div>
+    {% if tissue=='FC' %}
+    <div style="text-align: center;margin: 10px;">
+        <img src="{{ url_for('static', filename='series/meta/FC_result/metaClust/heatmap_FC_GSE5281.csv.png') }}" width="40%" />
+    </div>
+    <div style="text-align: center;margin: 10px;">
+        <img src="{{ url_for('static', filename='series/meta/FC_result/metaClust/heatmap_FC_GSE12685.csv.png') }}" width="40%" />
+    </div>
+    <div style="text-align: center;margin: 10px;">
+        <img src="{{ url_for('static', filename='series/meta/FC_result/metaClust/heatmap_FC_GSE13214.csv.png') }}" width="40%" />
+    </div>
+    {% elif tissue=='HI' %}
+    <div class="col-md-8 col-md-offset-2">
+        <img src="{{ url_for('static', filename='series/meta/HI_result/metaClust/heatmap_HI_GSE1297.csv.png') }}" />
+        <img src="{{ url_for('static', filename='series/meta/HI_result/metaClust/heatmap_HI_GSE5281.csv.png') }}" />
+        <img src="{{ url_for('static', filename='series/meta/HI_result/metaClust/heatmap_HI_GSE13214.csv.png') }}" />
+        <img src="{{ url_for('static', filename='series/meta/HI_result/metaClust/heatmap_HI_GSE48350.csv.png') }}" />
+    </div>
+    {% elif tissue=='TC' %}
+    <div class="col-md-8 col-md-offset-2">
+        <img src="{{ url_for('static', filename='series/meta/TC_result/metaClust/heatmap_TC_GSE5281.csv.png') }}" />
+        <img src="{{ url_for('static', filename='series/meta/TC_result/metaClust/heatmap_TC_GSE29652.csv.png') }}" />
+        <img src="{{ url_for('static', filename='series/meta/TC_result/metaClust/heatmap_TC_GSE95587_2.csv.png') }}" />
+        <img src="{{ url_for('static', filename='series/meta/TC_result/metaClust/heatmap_TC_GSE104704_2.csv.png') }}" /></div>
+    {% endif %}
+    {% elif dir1=='3' %}
+    <h1 style="text-align: center;padding: 50px;">MetaDE Results</h1>
+        <div class="panel-note col-md-8 col-md-offset-2">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-file" aria-hidden="true" ></span> Page Introduction</h3>
+            </div>
+            <div class="panel-body" style="font-size: 15px;">
+                ​​The MetaDE implements 12 major meta-analysis methods with 22 variations for differential expression analysis that fall into three main categories: combining p-values, combining effect sizes, and others (e.g., combining ranks, etc.).<br><br>
+                In the heatmap, rows refer to the declared DE genes under the specified FDR cutoff, columns refer to samples, and solid white lines are used to separate different studies. The dashed white lines are used to separate groups. Colors of the cells correspond to scaled expression level, as indicated in the color key below. The table specifically shows the detailed information of each differentially expressed gene.
+            </div>
+        </div>
+    </div>
+    {% if tissue=='FC' %}
+    <div class="row" style="margin-bottom: 30px;text-align: center;">
+        <div class="col-md-4 col-md-offset-2">
+            <img src="{{ url_for('static', filename='series/meta/FC_result/MetaDE/all.png') }}" width="100%" />
+            <h5 style="margin-top: 40px;margin-bottom: 40px;">Heatmap of All Diffrentally Expressed Genes</h5>
+        </div>
+        <div class="col-md-4">
+            <img src="{{ url_for('static', filename='series/meta/FC_result/MetaDE/39.png') }}" width="100%" />
+            <h5 style="margin-top: 40px;margin-bottom: 40px;">Heatmap of Several Most Diffrentally Expressed Genes</h5>
+        </div>
+    </div>
+    <div class="col-md-8 col-md-offset-2">
+        <table data-toggle="table" data-sortable="true" data-url="/json/meta/{{tissue}}/DE" data-pagination="true" data-page-number="1" data-page-Size="10" data-page-list=[10,20,50,100,500,2000] toolbar="#toolbar" data-side-pagination="true" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-show-export="true">
+            <thead>
+                <tr>
+                    <th data-field="SYMBOL" data-sortable="true">SYMBOL</th>
+                    <th data-field="ind.stat.FC_GSE13214.csv" data-sortable="true">ind.stat.FC_GSE13214</th>
+                    <th data-field="ind.stat.FC_GSE12685.csv" data-sortable="true">ind.stat.FC_GSE12685</th>
+                    <th data-field="ind.stat.FC_GSE5281.csv" data-sortable="true">ind.stat.FC_GSE5281</th>
+                    <th data-field="ind.p.FC_GSE13214.csv" data-sortable="true">ind.p.FC_GSE13214</th>
+                    <th data-field="ind.p.FC_GSE12685.csv" data-sortable="true">ind.p.FC_GSE12685</th>
+                    <th data-field="ind.p.FC_GSE5281.csv" data-sortable="true">ind.p.FC_GSE5281</th>
+                    <th data-field="stat" data-sortable="true">stat</th>
+                    <th data-field="pval" data-sortable="true">pval</th>
+                    <th data-field="FDR" data-sortable="true">FDR</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    {% elif tissue=='HI' %}
+    <div class="row" style="margin-bottom: 30px;text-align: center;">
+        <div class="col-md-4 col-md-offset-2">
+            <img src="{{ url_for('static', filename='series/meta/HI_result/MetaDE/all.png') }}" width="100%" />
+            <h5 style="margin-top: 40px;margin-bottom: 40px;">Heatmap of All Diffrentally Expressed Genes</h5>
+        </div>
+        <div class="col-md-4">
+            <img src="{{ url_for('static', filename='series/meta/HI_result/MetaDE/36.png') }}" width="100%" />
+            <h5 style="margin-top: 40px;margin-bottom: 40px;">Heatmap of Several Most Diffrentally Expressed Genes</h5>
+        </div>
+    </div>
+    <div class="col-md-8 col-md-offset-2">
+        <table data-toggle="table" data-sortable="true" data-url="/json/meta/{{tissue}}/DE" data-pagination="true" data-page-number="1" data-page-Size="10" data-page-list=[10,20,50,100,500,2000] toolbar="#toolbar" data-side-pagination="true" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-show-export="true">
+            <thead>
+                <tr>
+                    <th data-field="SYMBOL" data-sortable="true">SYMBOL</th>
+                    <th data-field="ind.stat.HI_GSE1297.csv" data-sortable="true">ind.stat.HI_GSE1297</th>
+                    <th data-field="ind.stat.HI_GSE5281.csv" data-sortable="true">ind.stat.HI_GSE5281</th>
+                    <th data-field="ind.stat.HI_GSE13214.csv" data-sortable="true">ind.stat.HI_GSE13214</th>
+                    <th data-field="ind.stat.HI_GSE48350.csv" data-sortable="true">ind.stat.HI_GSE48350</th>
+                    <th data-field="ind.p.HI_GSE1297.csv" data-sortable="true">ind.p.HI_GSE1297</th>
+                    <th data-field="ind.p.HI_GSE5281.csv" data-sortable="true">ind.p.HI_GSE5281.csv</th>
+                    <th data-field="ind.p.HI_GSE13214.csv" data-sortable="true">ind.p.HI_GSE13214.csv</th>
+                    <th data-field="ind.p.HI_GSE48350.csv" data-sortable="true">ind.p.HI_GSE48350.csv</th>
+                    <th data-field="stat" data-sortable="true">stat</th>
+                    <th data-field="pval" data-sortable="true">pval</th>
+                    <th data-field="FDR" data-sortable="true">FDR</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    {% elif tissue=='TC' %}
+    <div class="row" style="margin-bottom: 30px;text-align: center;">
+        <div class="col-md-4 col-md-offset-2">
+            <img src="{{ url_for('static', filename='series/meta/TC_result/MetaDE/DE.png') }}" width="100%" />
+            <h5 style="margin-top: 40px;margin-bottom: 40px;">Heatmap of All Diffrentally Expressed Genes</h5>
+        </div>
+        <div class="col-md-4">
+            <img src="{{ url_for('static', filename='series/meta/TC_result/MetaDE/20.png') }}" width="100%" />
+            <h5 style="margin-top: 40px;margin-bottom: 40px;">Heatmap of Several Most Diffrentally Expressed Genes</h5>
+        </div>
+    </div>
+    <div class="col-md-8 col-md-offset-2">
+        <table data-toggle="table" data-sortable="true" data-url="/json/meta/{{tissue}}/DE" data-pagination="true" data-page-number="1" data-page-Size="10" data-page-list=[10,20,50,100,500,2000] toolbar="#toolbar" data-side-pagination="true" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-show-export="true">
+            <thead>
+                <tr>
+                    <th data-field="SYMBOL" data-sortable="true">SYMBOL</th>
+                    <th data-field="ind.stat.TC_GSE95587_2.csv" data-sortable="true">ind.stat.TC_GSE95587_2.csv</th>
+                    <th data-field="ind.stat.TC_GSE104704_2.csv" data-sortable="true">ind.stat.TC_GSE104704_2.csv</th>
+                    <th data-field="ind.stat.TC_GSE29652.csv" data-sortable="true">ind.stat.TC_GSE29652.csv</th>
+                    <th data-field="ind.stat.TC_GSE5281.csv" data-sortable="true">ind.stat.TC_GSE5281.csv</th>
+                    <th data-field="ind.p.TC_GSE95587_2.csv" data-sortable="true">ind.p.TC_GSE95587_2.csv</th>
+                    <th data-field="ind.p.TC_GSE104704_2.csv" data-sortable="true">ind.p.TC_GSE104704_2.csv</th>
+                    <th data-field="ind.p.TC_GSE29652.csv" data-sortable="true">ind.p.TC_GSE29652.csv</th>
+                    <th data-field="ind.p.TC_GSE5281.csv" data-sortable="true">ind.p.TC_GSE5281.csv</th>
+                    <th data-field="stat" data-sortable="true">stat</th>
+                    <th data-field="pval" data-sortable="true">pval</th>
+                    <th data-field="FDR" data-sortable="true">FDR</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    {% endif %}
+    {% elif dir1=='4' %}
+    <h1 style="text-align: center;padding: 50px;">MetaPCA Results</h1>
+        <div class="panel-note col-md-8 col-md-offset-2">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-file" aria-hidden="true" ></span> Page Introduction</h3>
+            </div>
+            <div class="panel-body" style="font-size: 15px;">
+                ​​Dimension reduction is a popular data-mining approach for transcriptomic analysis. MetaPCA aims to combine multiple omics datasets of identical or similar biological hypothesis and perform simultaneous dimensional reduction in all studies.<br><br>
+                The x-axis (horizontal) is the first principal component, and the y-axis (vertical) is the second principal component. Each dot represents a sample in a study with the sample label marked to the top right of the figure.
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-md-offset-4">
+        <img src="{{ url_for('static', filename='series/meta/'+tissue+'_result/MetaPCA/metaPCA_results_dim2SSC_autoDim.png') }}" width="100%" />
+    </div>
+    {% elif dir1=='5' %}
+    <h1 style="text-align: center;padding: 50px;">MetaQC Results</h1>
+        <div class="panel-note col-md-8 col-md-offset-2">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-file" aria-hidden="true" ></span> Page Introduction</h3>
+            </div>
+            <div class="panel-body" style="font-size: 15px;">
+                The MetaQC page provides an objective and quantitative tool to help determine the inclusion/exclusion of studies for meta-analysis. More specifically, MetaQC provides users with six quantitative quality control (QC) measures: IQC, EQC, AQCg, CQCg, AQCp, and CQCp. Details of how each measure is defined and computed can be found in Kang et al. (2012). In addition, visualization plots and summarization tables are generated using principal component analysis (PCA) biplots and standardized mean ranks (SMR) to assist in visualization and decision.<br><br>
+                ​ Figure includes seven columns, with the first six columns corresponding to the six quantitative quality control measures of all studies (a larger value indicates a better quality), and the seventh column is the rank of summary statistics of all the six quality measures (a lower rank indicates a better quality). In addition to the tabular results, MetaQC also generated a PCA biplot based on the six quality control measures, where the circled number is the study index and arrows indicate different measures. If a study (a circled number) is along the direction of majority of the six QC directions, then the study has higher quality and is consistent with other studies. In general, if a study has larger standard mean rank (SMR) values, it is considered to have lower quality and is inconsistent with other studies.
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 col-md-offset-1">
+            <img src="{{ url_for('static', filename='series/meta/'+tissue+'_result/MetaQC/biplot.png') }}" width="100%" />
+        </div>
+        <div class="col-md-6 ">
+            <table data-toggle="table" data-sortable="true" data-url="/json/meta/{{tissue}}/QC" data-pagination="true" data-page-number="1" data-page-Size="10" data-page-list=[10,20,50,100,500,2000] toolbar="#toolbar" data-side-pagination="true" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-show-export="true">
+                <thead>
+                    <tr>
+                        <th data-field="Series" data-sortable="true">Series</th>
+                        <th data-field="IQC" data-sortable="true">IQC</th>
+                        <th data-field="EQC" data-sortable="true">EQC</th>
+                        <th data-field="AQCg" data-sortable="true">AQCg</th>
+                        <th data-field="AQCp" data-sortable="true">AQCp</th>
+                        <th data-field="CQCg" data-sortable="true">CQCg</th>
+                        <th data-field="CQCp" data-sortable="true">CQCp</th>
+                        <th data-field="SMR" data-sortable="true">SMR</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+    {% elif dir1=='6' %}
+    <h1 style="text-align: center;padding: 50px;">MetaNetwork Results:Basic Modules Figures Weight {{dir2}}00</h1>
+        <div class="panel-note col-md-8 col-md-offset-2">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-file" aria-hidden="true" ></span> Page Introduction</h3>
+            </div>
+            <div class="panel-body" style="font-size: 15px;">
+                ​​MetaNetwork aims to detect gene modules with different co-expression patterns under different biological conditions. We use the correlation to quantify the co-expression level. High correlation in a gene module, either positive or negative, means the genes inside this module are functionally related, which may indicate they are controlled by the same transcriptional regulatory program, or member of the same pathway.<br><br>
+                ​ MetaNetwork select basic modules to plot. Each dot represents a gene. An edge represents the two genes are highly correlated. The network density is marked on top of each network.
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 col-md-offset-1">
+                <img src="{{ url_for('static', filename='series/meta/'+tissue+'_result/outputsMetaNetwork/Basic_modules_figures_weight_'+dir2+'00/Basic_module_component_1_repeat_1_weight_'+dir2+'00_backward.png') }}" width="100%" />
+                <h5 style="margin-top: 40px;margin-bottom: 40px;">Basic Modules Figures Weight {{dir2}}00——Repeat 1 Backward</h5>
+            </div>
+            <div class="col-md-4 col-md-offset-2">
+                <img src="{{ url_for('static', filename='series/meta/'+tissue+'_result/outputsMetaNetwork/Basic_modules_figures_weight_'+dir2+'00/Basic_module_component_1_repeat_1_weight_'+dir2+'00_forward.png') }}" width="100%" />
+                <h5 style="margin-top: 40px;margin-bottom: 40px;">Basic Modules Figures Weight {{dir2}}00——Repeat 1 Forward</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 col-md-offset-1">
+                <img src="{{ url_for('static', filename='series/meta/'+tissue+'_result/outputsMetaNetwork/Basic_modules_figures_weight_'+dir2+'00/Basic_module_component_1_repeat_2_weight_'+dir2+'00_backward.png') }}" width="100%" />
+                <h5 style="margin-top: 40px;margin-bottom: 40px;">Basic Modules Figures Weight {{dir2}}00——Repeat 2 Backward</h5>
+            </div>
+            <div class="col-md-4 col-md-offset-2">
+                <img src="{{ url_for('static', filename='series/meta/'+tissue+'_result/outputsMetaNetwork/Basic_modules_figures_weight_'+dir2+'00/Basic_module_component_1_repeat_2_weight_'+dir2+'00_forward.png') }}" width="100%" />
+                <h5 style="margin-top: 40px;margin-bottom: 40px;">Basic Modules Figures Weight {{dir2}}00——Repeat 2 Forward</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 col-md-offset-1">
+                <img src="{{ url_for('static', filename='series/meta/'+tissue+'_result/outputsMetaNetwork/Basic_modules_figures_weight_'+dir2+'00/Basic_module_component_1_repeat_3_weight_'+dir2+'00_backward.png') }}" width="100%" />
+                <h5 style="margin-top: 40px;margin-bottom: 40px;">Basic Modules Figures Weight {{dir2}}00——Repeat 4 Backward</h5>
+            </div>
+            <div class="col-md-4 col-md-offset-2">
+                <img src="{{ url_for('static', filename='series/meta/'+tissue+'_result/outputsMetaNetwork/Basic_modules_figures_weight_'+dir2+'00/Basic_module_component_1_repeat_3_weight_'+dir2+'00_forward.png') }}" width="100%" />
+                <h5 style="margin-top: 40px;margin-bottom: 40px;">Basic Modules Figures Weight {{dir2}}00——Repeat 3 Forward</h5>
+            </div>
+        </div>
+    </div>
+    {% elif dir1=='7' %}
+    {% if dir2=='1' %}
+    <h1 style="text-align: center;padding: 50px;">MetaPath Results:Table</h1>
+        <div class="panel-note col-md-8 col-md-offset-2">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-file" aria-hidden="true" ></span> Page Introduction</h3>
+            </div>
+            <div class="panel-body" style="font-size: 15px;">
+                ​​The MetaPath module performs pathway analysis by two advanced meta-analytic pathway analysis tools: Meta-Analysis for Pathway Enrichment (MAPE) and Comparative Pathway Integrator (CPI) (Shen et al., 2010; Fang et al., 2017). Instead of directly using the declared DE genes from MetaDE analysis as input, the MAPE algorithm performs pathway analysis in each study and performs meta-analysis on the pathway level. In addition, CPI also includes advanced pathway clustering diagnostics and pathway clustering with text mining to circumvent abundant pathway redundancy in the databases and improve interpretation.<br><br>
+                MetaPath has many advantages over common pathway annotation. MetaPath uses more comprehensive and sophisticated methods to jointly perform DE analysis and pathway analysis, and it provides stronger statistical power and more extensive and intuitive biological insights. For example, MAPE G is more similar to common pathway annotation in a sense since both of them combine gene level p-values first and then perform pathway analysis, while MAPE P is different since it performs single-study DE and pathway analysis first and then combines pathway level p-values. MAPE I takes the advantage of both, and CPI is a more advanced algorithm to further perform meta-analysis on studies with known heterogeneities. In addition, MetaPath performs additional pathway clustering to reduce pathway redundancy and extracts the key words from each cluster via the text mining algorithm to assist with the interpretation.<br><br>
+                ​The heatmap in result shows the -log10 transformed p-value of enrichment analysis in each study. Studies are on columns, and the selected pathways are on rows. The color bar on left indicates group of pathways. In the heatmap, red indicates “more enriched,” and yellow indicates “not significantly enriched.” The color key is on the top left corner. The pathways are sorted by the pathway clusters, as indicated by the colors on the left side of the heatmap.
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8 col-md-offset-2">
+        <table data-toggle="table" data-sortable="true" data-url="/json/meta/{{tissue}}/Path" data-pagination="true" data-page-number="1" data-page-Size="10" data-page-list=[10,20,50,100,500,2000] toolbar="#toolbar" data-side-pagination="true" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-show-export="true">
+            <thead>
+                <tr>
+                    <th data-field="Pathway_Annotation" data-sortable="true">Pathway Annotation</th>
+                    <th data-field="q_value_meta" data-sortable="true">q_value_meta</th>
+                    {% if tissue=='FC' %}
+                    <th data-field="FC_GSE13214.csv" data-sortable="true">FC_GSE13214</th>
+                    <th data-field="FC_GSE5281.csv" data-sortable="true">FC_GSE5281</th>
+                    <th data-field="FC_GSE12685.csv" data-sortable="true">FC_GSE12685</th>
+                    {% elif tissue=='HI' %}
+                    <th data-field="HI_GSE1297.csv" data-sortable="true">HI_GSE1297</th>
+                    <th data-field="HI_GSE5281.csv" data-sortable="true">HI_GSE5281</th>
+                    <th data-field="HI_GSE13214.csv" data-sortable="true">HI_GSE13214</th>
+                    <th data-field="HI_GSE48350.csv" data-sortable="true">HI_GSE48350</th>
+                    {% else %}
+                    <th data-field="TC_GSE95587_2.csv" data-sortable="true">TC_GSE95587_2</th>
+                    <th data-field="TC_GSE104704_2.csv" data-sortable="true">TC_GSE104704_2</th>
+                    <th data-field="TC_GSE29652.csv" data-sortable="true">TC_GSE29652</th>
+                    <th data-field="TC_GSE5281.csv" data-sortable="true">TC_GSE5281</th>
+                    {% endif %}
+                </tr>
+            </thead>
+        </table>
+    </div>
+    {% endif %}
+    {% if dir2=='2' %}
+    <h1 style="text-align: center;padding: 50px;">MetaPath Results:Heatmaps</h1>
+        <div class="panel-note col-md-8 col-md-offset-2">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-file" aria-hidden="true" ></span> Page Introduction</h3>
+            </div>
+            <div class="panel-body" style="font-size: 15px;">
+                ​​The MetaPath module performs pathway analysis by two advanced meta-analytic pathway analysis tools: Meta-Analysis for Pathway Enrichment (MAPE) and Comparative Pathway Integrator (CPI) (Shen et al., 2010; Fang et al., 2017). Instead of directly using the declared DE genes from MetaDE analysis as input, the MAPE algorithm performs pathway analysis in each study and performs meta-analysis on the pathway level. In addition, CPI also includes advanced pathway clustering diagnostics and pathway clustering with text mining to circumvent abundant pathway redundancy in the databases and improve interpretation.<br><br>
+                MetaPath has many advantages over common pathway annotation. MetaPath uses more comprehensive and sophisticated methods to jointly perform DE analysis and pathway analysis, and it provides stronger statistical power and more extensive and intuitive biological insights. For example, MAPE G is more similar to common pathway annotation in a sense since both of them combine gene level p-values first and then perform pathway analysis, while MAPE P is different since it performs single-study DE and pathway analysis first and then combines pathway level p-values. MAPE I takes the advantage of both, and CPI is a more advanced algorithm to further perform meta-analysis on studies with known heterogeneities. In addition, MetaPath performs additional pathway clustering to reduce pathway redundancy and extracts the key words from each cluster via the text mining algorithm to assist with the interpretation.<br><br>
+                ​The heatmap in result shows the -log10 transformed p-value of enrichment analysis in each study. Studies are on columns, and the selected pathways are on rows. The color bar on left indicates group of pathways. In the heatmap, red indicates “more enriched,” and yellow indicates “not significantly enriched.” The color key is on the top left corner. The pathways are sorted by the pathway clusters, as indicated by the colors on the left side of the heatmap.
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <embed src="{{ url_for('static', filename='series/meta/'+tissue+'_result/outputsMetaPath/Clustering_files_5_clusters/Heatmap_clusters_all.pdf') }}" frameborder="0" width="100%" scrolling="No" height="700"></embed>
+                <h3 style="margin-top: 40px;margin-bottom: 40px;text-align: center;">Heatmap Clusters(All)</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <embed src="{{ url_for('static', filename='series/meta/'+tissue+'_result/outputsMetaPath/Clustering_files_5_clusters/Heatmap_each_cluster_kappa_number_overlap_genes_all.pdf') }}" frameborder="0" width="100%" scrolling="No" height="700"></embed>
+                <h3 style="margin-top: 40px;margin-bottom: 40px;text-align: center;">Heatmap Clusters(Each Cluste Kappa Number Overlap Genes)</h3>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
+{%endblock%}

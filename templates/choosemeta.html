@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}
+Summary|Meta Analysis - ALZDB
+{% endblock %}
+{% block main %}
+{% block style %}
+<style type="text/css">
+    .col-md-6 {
+        padding: 20px;
+        border-top:1px solid #edf0f2;
+    }
+    .col-md-4{
+        padding: 20px;
+        border-top:1px solid #edf0f2;
+    }
+</style>
+{% endblock %}
+<!--========== SLIDER ==========-->
+<div class="promo-block" style="background: url({{ url_for('static', filename='img/background.png') }}) ;background-size: 100%;padding: 120px 0 10px;">
+    <h1 class="promo-block-title" style="font-size: 50px;text-align: left;padding-left: 50px">Transcriptome Data —— mRNA</h1>
+</div>
+<!--========== SLIDER ==========-->
+<ul class="navbaradd">
+    <li><a class="left"><b>Choose Tissues</b></a></li>
+    <li><a href="/meta/FC/index=1/0"><b>Frontal Cortex</b></a></li>
+    <li><a href="/meta/HI/index=1/0"><b>Hippocampus</b></a></li>
+    <li><a href="/meta/TC/index=1/0"><b>Temporal Cortex</b></a></li>
+</ul>
+<div class="container" style="margin-top: 30px;">
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1" style="padding: 20px;">
+            <div class="sumtext">
+                <h3>Abstract</h3>
+                <p>Meta analysis is a statistical method commonly used in biological research. Its essence is a kind of statistical method that integrates many research results with specific conditions and the same subject. Since we performed separate analyses of many series of studies in the mRNA section, in order to eliminate batch effects and other errors between these studies, we conducted a meta-analysis between similar studies, which are currently performed on three regions of the brain. Meta analysis. The goal is to find more convincing differential genes and to develop downstream annotations and analyses of the selected genes.</p>
+            </div>
+        </div>
+    </div>
+    
+</div>
+{%endblock%}

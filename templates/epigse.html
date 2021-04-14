@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+{% block title %}
+GSE{{gse}} - ALZDB
+{% endblock %}
+{% block main %}
+<!--========== SLIDER ==========-->
+<div class="promo-block" style="background: url({{ url_for('static', filename='img/background.png') }}) ;background-size: 100%;padding: 120px 0 10px;">
+    <h1 class="promo-block-title" style="font-size: 50px;text-align: left;padding-left: 50px">Methylation Profiling</h1>
+</div>
+<!--========== SLIDER ==========-->
+{% if gse=='46644' %}
+<ul class="navbaradd">
+    <li><a class="left"><b>GSE46644</b></a></li>
+    <li><a href="/epigenome/GSE{{gse}}/index=1/0" {% if num=='1' %} class="active" {% endif %}>Info</a></li>
+    <li><a href="/epigenome/GSE{{gse}}/index=2/0" {% if num=='2' %} class="active" {% endif %}>DMPs</a></li>
+    <li><a href="/epigenome/GSE{{gse}}/index=4/0" {% if num=='4' %} class="active" {% endif %}>Graph</a></li>
+    <li><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE{{gse}}">More</a></li>
+    <li id="navbarright"><a href="/epigenome"><b>Choose Methylation</b></a></li>
+</ul>
+{% else %}
+<ul class="navbaradd">
+    <li><a class="left"><b>GSE{{gse}}</b></a></li>
+    <li><a href="/epigenome/GSE{{gse}}/index=1/0" {% if num=='1' %} class="active" {% endif %}>Info</a></li>
+    <li><a href="/epigenome/GSE{{gse}}/index=2/0" {% if num=='2' %} class="active" {% endif %}>DMPs</a></li>
+    <li><a href="/epigenome/GSE{{gse}}/index=3/0" {% if num=='3' %} class="active" {% endif %}>DMRs</a></li>
+    <li><a href="/epigenome/GSE{{gse}}/index=4/0" {% if num=='4' %} class="active" {% endif %}>Graph</a></li>
+    <li><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE{{gse}}">More</a></li>
+    <li id="navbarright"><a href="/epigenome"><b>Choose Methylation</b></a></li>
+</ul>
+{% endif %}
+{% if num == '1'%}
+<div style="background-color: #fafafa">
+    <div style="padding-top: 80px;">
+        <iframe src="{{url_for('static',filename='series/info_summary/GSE'+gse+'.html')}}" frameborder="0" width="100%" scrolling="No" id="external-frame"></iframe>
+    </div>
+</div>
+{% elif num=='2' %}
+<h1 style="text-align: center;padding: 50px;">Different Methylation Points Results</h1>
+<div class="col-md-8 col-md-offset-2">
+    {% if gse=='46644' %}
+    <div style="padding-top: 20px;padding-bottom: 20px;border: 2px #000">
+        <iframe src="http://106.14.221.173/jbrowse/?loc=chr20%3A752101..904700&tracks=DNA%2Cmethylation3%2Cmethylation2%2Cmethylation%2CGRCh37&highlight=" frameborder="0" width="100%" height="600"></iframe>
+    </div>
+    <table data-toggle="table" data-sortable="true" data-url="/json/epi/GSE{{gse}}/methydiff" data-pagination="true" data-page-number="1" data-page-Size="10" data-page-list=[10,20,50,100,500,2000] toolbar="#toolbar" data-side-pagination="true" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-show-export="true">
+        <thead>
+            <tr>
+                <th data-field="chr" data-sortable="true">chr<sup>a</sup></th>
+                <th data-field="start" data-sortable="true">start<sup>b</sup></th>
+                <th data-field="end" data-sortable="true">end<sup>c</sup></th>
+                <th data-field="strand" data-sortable="true">strand<sup>d</sup></th>
+                <th data-field="pvalue" data-sortable="true">pvalue<sup>e</sup></th>
+                <th data-field="qvalue" data-sortable="true">qvalue<sup>f</sup></th>
+                <th data-field="meth.diff" data-sortable="true">meth.diff<sup>g</sup></th>
+                <th data-field="link" data-sortable="true" data-formatter="LinkFormatter8">More<sup>h</sup></th>
+            </tr>
+        </thead>
+    </table>
+    <div class="panel-note" style="text-align: left;">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Notes</h3>
+            </div>
+            <div class="panel-body">
+                <table class="note-table">
+                    <tr>
+                        <td><sup>a</sup>chr</td>
+                        <td>-Chromosome number.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>b</sup>start</td>
+                        <td>-Initial position of methylation.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>c</sup>end</td>
+                        <td>-End position of methylation.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>d</sup>strand</td>
+                        <td>-Location of methylation sites in genome(positive or negative chains).</td>
+                    </tr>
+                    <tr>
+                        <td><sup>e</sup>pvalue</td>
+                        <td>-Credibility level.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>f</sup>qvalue</td>
+                        <td>-The q-value of a test measures the proportion of false positives incurred (called the false discovery rate) when that particular test is called significant.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>g</sup>meth.diff</td>
+                        <td>-Methylation degree of loci.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>h</sup>More</td>
+                        <td>-click on <i>view in jBrowse</i> so that you can turn to the genome browse to see this methylation site.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div style="text-align: center;">
+        <p>Due to the huge amount of data, only DMPs of which adj.P.Value < 0.05 are shown are displayed.<a href="/#search"><u> Click here to find other DMPs by location or gene ID.</u></a></p>
+    </div>
+    <table data-toggle="table" data-sortable="true" data-url="/json/epi/GSE{{gse}}/dmps" data-pagination="true" data-page-number="1" data-page-Size="10" data-page-list=[10,20,50,100,500,2000] toolbar="#toolbar" data-side-pagination="true" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-show-export="true">
+        <thead>
+            <tr>
+                <th data-field="chr" data-sortable="true">chr<sup>a</sup></th>
+                <th data-field="pos" data-sortable="true">pos<sup>b</sup></th>
+                <th data-field="strand" data-sortable="true">strand<sup>c</sup></th>
+                <th data-field="Name" data-sortable="true">Name<sup>d</sup></th>
+                <th data-field="Probe_rs" data-sortable="true">Probe_rs</th>
+                <th data-field="Probe_maf" data-sortable="true">Probe_maf</th>
+                <th data-field="CpG_rs" data-sortable="true">CpG_rs</th>
+                <th data-field="CpG_maf" data-sortable="true">CpG_maf</th>
+                <th data-field="SBE_rs" data-sortable="true">SBE_rs</th>
+                <th data-field="SBE_maf" data-sortable="true">SBE_maf</th>
+                <th data-field="Islands_Name" data-sortable="true">Islands_Name<sup>e</sup></th>
+                <th data-field="Relation_to_Island" data-sortable="true">Relation_to_Island<sup>f</sup></th>
+                <th data-field="UCSC_RefGene_Name" data-sortable="true">UCSC_RefGene_Name<sup>g</sup></th>
+                <th data-field="UCSC_RefGene_Accession" data-sortable="true">UCSC_RefGene_Accession<sup>h</sup></th>
+                <th data-field="UCSC_RefGene_Group" data-sortable="true">UCSC_RefGene_Group<sup>i</sup></th>
+                <th data-field="Phantom" data-sortable="true">Phantom</th>
+                <th data-field="Enhancer" data-sortable="true">Enhancer<sup>j</sup></th>
+                <th data-field="HMM_Island" data-sortable="true">HMM_Island</th>
+                <th data-field="Regulatory_Feature_Name" data-sortable="true">Regulatory_Feature_Name</th>
+                <th data-field="Regulatory_Feature_Group" data-sortable="true">Regulatory_Feature_Group</th>
+                <th data-field="DHS" data-sortable="true">DHS</th>
+                <th data-field="logFC" data-sortable="true">logFC<sup>k</sup></th>
+                <th data-field="AveExpr" data-sortable="true">AveExpr<sup>l</sup></th>
+                <th data-field="t" data-sortable="true">t<sup>m</sup></th>
+                <th data-field="P.Value" data-sortable="true">P.Value<sup>n</sup></th>
+                <th data-field="adj.P.Val" data-sortable="true">adj.P.Val<sup>o</sup></th>
+                <th data-field="B" data-sortable="true">B<sup>p</sup></th>
+            </tr>
+        </thead>
+    </table>
+    <div class="panel-note" style="text-align: left;">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Notes</h3>
+            </div>
+            <div class="panel-body">
+                <table class="note-table">
+                    <tr>
+                        <td><sup>a</sup>chr</td>
+                        <td>-Chromosome number.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>b</sup>pos</td>
+                        <td>-Location of methylation sites in genome.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>c</sup>strand</td>
+                        <td>-Location of methylation sites in genome(positive or negative chains).</td>
+                    </tr>
+                    <tr>
+                        <td><sup>d</sup>Name</td>
+                        <td>-Name of methylation site.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>e</sup>Islands_Name</td>
+                        <td>-Methylation island name.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>f</sup>Relation_to_Island</td>
+                        <td>- Location of this site in methylation Island.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>g</sup>UCSC_RefGene_Name</td>
+                        <td>- UCSC reference gene name</td>
+                    </tr>
+                    <tr>
+                        <td><sup>h</sup>UCSC_RefGene_Accession</td>
+                        <td>UCSC reference gene accession</td>
+                    </tr>
+                    <tr>
+                        <td><sup>i</sup>UCSC_RefGene_Group</td>
+                        <td>-UCSC reference gene group.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>j</sup>Enhancer</td>
+                        <td>-The site in a enhancer sequence.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>k</sup>logFC</td>
+                        <td>-Logarithm of the multiple of gene differential expression.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>l</sup>AveExpr</td>
+                        <td>-Average expression value in all samples in which the probe set is located.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>m</sup>t</td>
+                        <td>-The t-value in the T test between two sets of expression values after Bayesian adjustment.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>n</sup>P.Value</td>
+                        <td>-P value calculated by Bayesian test.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>o</sup>adj.P.Val</td>
+                        <td>-P value after BH adjustment.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>p</sup>B</td>
+                        <td>-The logarithmic value of the standard deviation calculated by empirical Bayesian. Through the table we show, you can sort any column, query the items you are interested in in the table, or download the whole table directly (support downloading to txt,csv and other formats).</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% elif num=='3' %}
+<h1 style="text-align: center;padding: 50px;">Different Methylation Regions Results</h1>
+<div class="col-md-8 col-md-offset-2">
+    <table data-toggle="table" data-sortable="true" data-url="/json/epi/GSE{{gse}}/dmrs" data-pagination="true" data-page-number="1" data-page-Size="10" data-page-list=[10,20,50,100,500,2000] toolbar="#toolbar" data-side-pagination="true" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-show-export="true">
+        <thead>
+            <tr>
+                <th data-field="coord" data-sortable="true">coord</th>
+                <th data-field="no.cpgs" data-sortable="true">no.cpgs</th>
+                <th data-field="minfdr" data-sortable="true">minfdr</th>
+                <th data-field="Stouffer" data-sortable="true">Stouffer</th>
+                <th data-field="maxbetafc" data-sortable="true">maxbetafc</th>
+                <th data-field="meanbetafc" data-sortable="true">meanbetafc</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+{% elif num=='4' %}
+{% if gse=='67419' %}
+<div class="container" style="padding-top: 50px;">
+    <div class="row">
+        <div class="col-md-6">
+            <embed src="{{url_for('static',filename='series/methylation/GSE'+gse+'/figure1.pdf')}}" frameborder="0" width="100%" scrolling="No" height="470"></embed>
+            <h4 style="margin-top: 25px;margin-bottom: 40px;text-align: center;">RAW</h4>
+        </div>
+        <div class="col-md-6">
+            <embed src="{{url_for('static',filename='series/methylation/GSE'+gse+'/figure2.pdf')}}" frameborder="0" width="100%" scrolling="No" height="470"></embed>
+            <h4 style="margin-top: 25px;margin-bottom: 40px;text-align: center;">Normalized</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <embed src="{{url_for('static',filename='series/methylation/GSE'+gse+'/figure3.pdf')}}" frameborder="0" width="100%" scrolling="No" height="470"></embed>
+            <h4 style="margin-top: 25px;margin-bottom: 40px;text-align: center;">PCA Plot</h4>
+        </div>
+        <div class="col-md-6">
+            <embed src="{{url_for('static',filename='series/methylation/GSE'+gse+'/figure4.pdf')}}" frameborder="0" width="100%" scrolling="No" height="470"></embed>
+            <h4 style="margin-top: 25px;margin-bottom: 40px;text-align: center;">M values</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <embed src="{{url_for('static',filename='series/methylation/GSE'+gse+'/figure5.pdf')}}" frameborder="0" width="100%" scrolling="No" height="470"></embed>
+            <h4 style="margin-top: 25px;margin-bottom: 40px;text-align: center;">Beta values</h4>
+        </div>
+        <div class="col-md-6">
+            <embed src="{{url_for('static',filename='series/methylation/GSE'+gse+'/figure6.pdf')}}" frameborder="0" width="100%" scrolling="No" height="470"></embed>
+            <h4 style="margin-top: 25px;margin-bottom: 40px;text-align: center;">Normalized</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <embed src="{{url_for('static',filename='series/methylation/GSE'+gse+'/figure7.pdf')}}" frameborder="0" width="100%" scrolling="No" height="470"></embed>
+            <h4 style="margin-top: 25px;margin-bottom: 40px;text-align: center;">RAW</h4>
+        </div>
+        <div class="col-md-6">
+            <embed src="{{url_for('static',filename='series/methylation/GSE'+gse+'/figure8.pdf')}}" frameborder="0" width="100%" scrolling="No" height="470"></embed>
+            <h4 style="margin-top: 25px;margin-bottom: 40px;text-align: center;">Normalized</h4>
+        </div>
+    </div>
+</div>
+{% elif gse=='66351' %}
+<div class="container" style="padding-top: 50px;">
+    <div class="row">
+        <div class="col-md-6">
+            <embed src="{{url_for('static',filename='series/methylation/GSE'+gse+'/figure1.pdf')}}" frameborder="0" width="100%" scrolling="No" height="470"></embed>
+            <h4 style="margin-top: 25px;margin-bottom: 40px;text-align: center;">RAW</h4>
+        </div>
+        <div class="col-md-6">
+            <embed src="{{url_for('static',filename='series/methylation/GSE'+gse+'/figure2.pdf')}}" frameborder="0" width="100%" scrolling="No" height="470"></embed>
+            <h4 style="margin-top: 25px;margin-bottom: 40px;text-align: center;">Normalized</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <embed src="{{url_for('static',filename='series/methylation/GSE'+gse+'/figure3.pdf')}}" frameborder="0" width="100%" scrolling="No" height="470"></embed>
+            <h4 style="margin-top: 25px;margin-bottom: 40px;text-align: center;">PCA Plot</h4>
+        </div>
+        <div class="col-md-6">
+            <embed src="{{url_for('static',filename='series/methylation/GSE'+gse+'/figure4.pdf')}}" frameborder="0" width="100%" scrolling="No" height="470"></embed>
+            <h4 style="margin-top: 25px;margin-bottom: 40px;text-align: center;">Beta values
+            </h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <embed src="{{url_for('static',filename='series/methylation/GSE'+gse+'/figure5.pdf')}}" frameborder="0" width="100%" scrolling="No" height="470"></embed>
+            <h4 style="margin-top: 25px;margin-bottom: 40px;text-align: center;">M values</h4>
+        </div>
+    </div>
+</div>
+{% elif gse=='46644' %}
+<div class="container" style="padding-top: 50px;">
+    <div class="row">
+        <div class="col-md-6">
+            <embed src="{{url_for('static',filename='series/methylation/GSE'+gse+'/FIGURE2A.pdf')}}" frameborder="0" width="100%" scrolling="No" height="600"></embed>
+            <h4 style="margin-top: 25px;margin-bottom: 40px;text-align: center;">Histogram of CpG coverage</h4>
+        </div>
+        <div class="col-md-6">
+            <embed src="{{url_for('static',filename='series/methylation/GSE'+gse+'/FIGURE2B.pdf')}}" frameborder="0" width="100%" scrolling="No" height="600"></embed>
+            <h4 style="margin-top: 25px;margin-bottom: 40px;text-align: center;">Histogram of % CpG methylation</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <embed src="{{url_for('static',filename='series/methylation/GSE'+gse+'/FIGURE4A.pdf')}}" frameborder="0" width="100%" scrolling="No" height="600"></embed>
+            <h4 style="margin-top: 25px;margin-bottom: 40px;text-align: center;">CpG methylation clustering</h4>
+        </div>
+        <div class="col-md-6">
+            <embed src="{{url_for('static',filename='series/methylation/GSE'+gse+'/FIGURE4B.pdf')}}" frameborder="0" width="100%" scrolling="No" height="600"></embed>
+            <h4 style="margin-top: 25px;margin-bottom: 40px;text-align: center;">CpG methylation PCA Analysis</h4>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endif %}
+{%endblock%}

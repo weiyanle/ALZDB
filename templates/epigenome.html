@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}
+Summary|Epigenome - ADDB
+{% endblock %}
+{% block main %}
+{% block style %}
+<style type="text/css">
+.col-md-6 {
+    padding: 20px;
+    border-top: 1px solid #edf0f2;
+}
+
+.col-md-4 {
+    padding: 20px;
+    border-top: 1px solid #edf0f2;
+}
+</style>
+{% endblock %}
+<!--========== SLIDER ==========-->
+<div class="promo-block" style="background: url({{ url_for('static', filename='img/background.png') }}) no-repeat;background-size: 100%;padding: 120px 0 10px;">
+    <h1 class="promo-block-title" style="font-size: 50px;text-align: left;padding-left: 50px">Epigenomic Results</h1>
+</div>
+<!--========== SLIDER ==========-->
+<ul class="navbaradd">
+    <li><a class="left"><b>Choose Series</b></a></li>
+    <li><a href="/epigenome/GSE46644/index=1/0"><b>GSE46644</b></a></li>
+    <li><a href="/epigenome/GSE66351/index=1/0"><b>GSE66351</b></a></li>
+    <li><a href="/epigenome/GSE67419/index=1/0"><b>GSE67419</b></a></li>
+</ul>
+<div class="container" style="margin-top: 30px;">
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1" style="padding: 20px;">
+            <div class="sumtext">
+                <h3>Abstract</h3>
+                <p>In recent years, epigenetics has become the focus of biomedical research. Epigenetics refers to the production of heritable variations without genomic sequences change. The main manifestations are DNA methylation, histone modification and so on. At present, the research on epigenetics of Alzheimer disease has gradually gained people’s attention. We integrated AD-related epigenetic data from several public databases, including high-throughput WBGS data as well as methylation chip data. Through our advanced analytical methods, we aim to reveal the impact of epigenetics on AD.</p>
+                <h3>WBGS Data Analysis</h3>
+                <p>Whole genome bisulfite Sequencing(WBGS) is a method based on bisulfite methylation analysis. The sample DNA is first treated with bisulfite to convert unmethylated C bases into U base, and the methylated C base will not change. After PCR amplification, the U base will become T, which is distinguished from the original methylated C base, and then combined with high-throughput sequencing technology. A single-base resolution full-genomic DNA methylation map can be drawn.</p>
+                <p>The analysis method we use comes from the R package methylKit. If you want to know more about this R package, please click <a href="https://bioconductor.org/packages/release/bioc/vignettes/methylKit/inst/doc/methylKit.html" target="_blank">here</a>.</p>
+                <h4>Result of Analysis</h4>
+                <p>The first figure is the histogram and numbers on bars denote what percentage of locations are contained in that bin. Typically, percent methylation histogram should have two peaks on both ends. In any given cell, any given base are either methylated or not. Therefore, looking at many cells should yield a similar pattern where we see lots of locations with high methylation and lots of locations with low methylation.</p>
+                <p>We also plot the read coverage per base information in a similar way, again numbers on bars denote what percentage of locations are contained in that bin. Experiments that are highly suffering from PCR duplication bias will have a secondary peak towards the right hand side of the histogram.</p>
+                <p>We cluster the samples based on the similarity of their methylation profiles. Then we do a PCA analysis on our samples.</p>
+                <p>For finding differentially methylated bases or regions, we use Fisher’s exact or logistic regression to calculate P-values, P-values will be adjusted to Q-values using <a href="https://www.ncbi.nlm.nih.gov/pubmed/21098430" target="_blank">SLIM method</a>.</p>
+                <h3>Methylation Chip Data Analysis</h3>
+                <p>Because of the high cost of sequencing, methylation chip remains the current primary method of studying epigenetics. We collected all the AD-related methylation chips in the GEO database and used the mainstream methylation chip research tools such as R packages minfi, missMethyl, DMRcate for data analysis.</p>
+                <p>Before and after the standardization process, we plot the density curve of the beta value. This is used to detect the effect of standardization.</p>
+                <p>In addition, we also conducted a PCA analysis to see the classification of the samples.</p>
+                <p>After that, we rigorously filter the probes: delete the probes with p value greater than 0.01, delete the probes on the X, Y chromosome, filter out all SNP-related probes, and delete corresponds to probes at multiple sites in the genome.</p>
+                <p>Subsequently, the figures of beta value and M value are performed. We believe that M value has better statistical properties, so it is used for the next step of difference analysis. But beta value has a more intuitive biological meaning. We have plotted the density distribution for both.</p>
+                </p>
+                <p>The most critical part is the screening of differential methylation sites, and the results of the screening are presented in the table.</p>
+                <h3>Genome browser</h3>
+                <p>We have also specially designed a user-friendly genome browser page to visually display the data:</p>
+                <div style="padding-top: 20px;padding-bottom: 20px;border: 2px #000">
+                    <iframe src="http://106.14.221.173/jbrowse/?loc=chr20%3A752101..904700&tracks=DNA%2Cmethylation3%2Cmethylation2%2Cmethylation%2CGRCh37&highlight=" frameborder="0" width="100%" height="600"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    {%endblock%}

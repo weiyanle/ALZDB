@@ -1,0 +1,504 @@
+{% extends "base.html" %}
+{% block title %}
+GSE{{gse}} - ALZDB
+{% endblock %}
+{% block main %}
+    <!--========== SLIDER ==========-->
+    <div class="promo-block" style="background: url({{ url_for('static', filename='img/background.png') }}) ;background-size: 100%;padding: 120px 0 10px;">
+        <h1 class="promo-block-title" style="font-size: 50px;text-align: left;padding-left: 50px">
+            {% if tp == 'mRNA' %}
+            Transcriptome Data —— mRNA
+            {% elif tp == 'miRNA' %}
+            Transcriptome Data —— miRNA
+            {% elif tp == 'protein' %}
+            Transcriptome Data —— Protein
+            {% endif %}
+        </h1>
+    </div>
+    <!--========== SLIDER ==========-->
+    <ul class="navbaradd">
+        <li><a class="left"><b>GSE{{gse}}</b></a></li>
+        <li><a href="/GSE{{gse}}/index=1/0" {% if num|int==1 %} class="active" {% endif %}><b>Info</b></a></li>
+        <div class="dropdownadd">
+            <a class="dropbtnadd" style="{% if num|int==2 %}background-color: #eaeaea;color: black;{% endif %}"><b>Diff</b></a>
+            <div class="dropdownadd-content">
+            <div class="dropdownadd2" >
+                {% if if_file %}
+                {% for path in file_list %}
+                <a class="dropbtadd2" href="/GSE{{gse}}/index=2/{{ path }}/0">{{path}}{% if diff_list[file_list.index(path)] |length < 2 %}(NA){% endif %}</a> {% endfor %} {% endif %} </div> </div></div>
+                <div class="dropdownadd">
+            </div>
+                {% if tp!='miRNA' %}
+                 <div class="dropdownadd">
+                        <a class="dropbtnadd" style="{% if num|int==3 %}background-color: #eaeaea;color: black;{% endif %}"><b>Annotation</b></a>
+                        <div class="dropdownadd-content">
+                            {% if if_file %}
+                            {% for path in file_list %}
+                            {% if diff_list[file_list.index(path)] |length > 4 %}
+                            <div class="dropdownadd2">
+                                <a class="dropbtnadd2">{{path}} »</a>
+                                <div class="dropdownadd2-content" style="min-width: 170px;right: -170px;">
+                                    <a href="/GSE{{gse}}/index=3/{{path}}_GO(BP)">GO(BP)</a>
+                                    <a href="/GSE{{gse}}/index=3/{{path}}_GO(CC)">GO(CC)</a>
+                                    <a href="/GSE{{gse}}/index=3/{{path}}_GO(MF)">GO(MF)</a>
+                                    <a href="/GSE{{gse}}/index=3/{{path}}_KEGG">KEGG</a>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="dropdownadd2">
+                                <a href="/GSE{{gse}}/index=3/{{path}}_NA" class="dropbtnadd2">{{path}}(NA)</a>
+                            </div>
+                            {% endif %}
+                            {% endfor %}{% endif %}
+                        </div>
+            </div>
+            {% endif %}
+            <div class="dropdownadd">
+                <a class="dropbtnadd" style="{% if num|int==4 %}background-color: #eaeaea;color: black;{% endif %}"><b>Graph</b></a>
+                <div class="dropdownadd-content">
+                    <div class="dropdownadd2">
+                        <a class="dropbtnadd2" href="/GSE{{gse}}/index=4/PCA">PCA</a>
+                    </div>
+                    <div class="dropdownadd2">
+                        <a class="dropbtnadd2">Volcano »</a>
+                        <div class="dropdownadd2-content" style="min-width: 195px;right: -195px;">
+                            {% for path in file_list %}
+                            {% if diff_list[file_list.index(path)] |length > 4 %}
+                            <a href="/GSE{{gse}}/index=4/{{ path }}_valcano">{{path}}</a>
+                            {% else %}
+                            <a href="/GSE{{gse}}/index=4/{{ path }}_NA">{{path}}(NA)</a>
+                            {% endif %}{% endfor %}
+                        </div>
+                    </div>
+                    {% if tp=='protein' %}
+                    <div class="dropdownadd2">
+                        <a class="dropbtnadd2">PPI »</a>
+                        <div class="dropdownadd2-content" style="min-width: 195px;right: -195px;">
+                            {% for path in file_list %}
+                            {% if ('diff.'+path+'.GSE'+gse) | ppi_link != '' %}
+                            <a href="/GSE{{gse}}/index=4/{{ path }}_PPI">{{path}}</a>
+                            {% else %}
+                            <a href="/GSE{{gse}}/index=4/{{ path }}_PPI">{{path}}(NA)</a>
+                            {% endif %}{% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="dropdownadd">
+                <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE{{gse}}" target="_blank"><b>More Info</b></a>
+            </div>
+            {% if tp == 'mRNA' %}
+            <li id="navbarright"><a href="/mRNA"><b>Choose mRNA</b></a></li>
+            {% elif tp == 'protein' %}
+            <li id="navbarright"><a href="/protein"><b>Choose Protein</b></a></li>
+            {% elif tp == 'miRNA' %}
+            <li id="navbarright"><a href="/miRNA"><b>Choose miRNA</b></a></li>
+            {% endif %}
+    </ul>
+    <div style="background-color: #fff">
+        {% if if_file %}
+        {% if num == '1'%}
+            <div class="panel-note col-md-8 col-md-offset-2" style="padding-top: 30px;">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><span class="glyphicon glyphicon-file" aria-hidden="true" ></span> Page Introduction</h3>
+                        </div>
+                        <div class="panel-body" style="font-size: 15px;">
+                            This page collects the time, source, purpose, and methodology of the current series. Most of the information comes from NCBI statistics. With the information provided on this page, you can easily contact the original author of this study. In particular, the grouping of samples is also on this page at the bottom of the page, which shows the names of the different groups and the number of differential genes obtained by comparison between the groups.
+                        </div>
+                    </div>
+                </div>
+        <div style="background-color: #fafafa">
+        <div style="padding-top: 40px;">
+            <iframe src="{{url_for('static',filename='series/info_summary/GSE'+gse+'.html')}}" frameborder="0" width="100%" scrolling="No" id="external-frame"></iframe>
+        <div style="padding-top: 30px;padding-bottom: 80px;">
+            <table class="summarytable2" cellpadding="2" cellspacing="0" width="600">
+                <tr valign="top">
+                    <td nowrap colspan="3">Differential Expession Summary</td>
+                </tr>
+                <tr valign="top">
+                    <td>Group</td>
+                    <td>Differentially Expressed Genes</td>
+                    <td>All Genes</td>
+                </tr>
+                {% for path in file_list %}
+                <tr valign="top">
+                    <td><a href="/GSE{{gse}}/index=2/{{ path }}/0">{{path}}{% if diff_list[file_list.index(path)] |length < 2 %}(NA){% endif %}</a> </td> <td>{{diff_list[file_list.index(path)] | length - 1}}</td>
+                    <td><a href="/GSE{{gse}}/index=2/{{ path }}_all/0">{{gse|all_num}}</a></td>
+                    {% endfor %}
+                </tr>
+                {% if gse|diff_txt != '' %}
+                <tr valign="top">
+                    <td colspan="3">*{%for str in gse|diff_txt %}<br>{{str}}{% endfor %}</td>
+                </tr>
+                {% endif %}
+            </table></div>
+        </div>
+            <!--    <div class="row" style="padding: 40px;">
+            
+        <div class="col-md-4 col-md-offset-4" style="text-align: center;padding-left: 50px;">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">GSE{{gse}}</h3>
+                </div>
+                <div class="panel-body">
+                    <p>zjkjfakfssssssssssss afkhsjfhjdf dsghsjdhgjshjk dshfjfdjdddddddd ddddddddddddd dddddddddddd dddddddddzjkjfakfssssssssssss afkhsjfhjdf dsghsdddddd dddddddddddd dddddddddzjkjfakfssssssssssss afkhsjfhjdf dsghsjdhgjshjk dshfjfdjdddddddd ddddddddddddd ddddddddddddd</p>
+                        <button type="button" class="btn btn-default" ><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE{{gse}}" target="_blank">
+                        More Information</a></button>
+                </div>
+            </div>
+        </div>
+    </div> -->
+        </div>
+        <div class="row" style="padding-bottom: 40px;">
+        <div class="col-md-4 col-md-offset-4">
+        {% if file_list|length==1 %}
+        <canvas id="myChart1" height="250"></canvas>
+        {% else %}
+        <canvas id="myChart" height="250"></canvas>
+        {% endif %}
+        </div>
+    </div>
+        {% elif num == '2' %}
+        <h1 style="text-align: center;padding-top: 30px ;">GSE{{ gse }} {{ diff_num }}</h1>
+        {% if '_all' in diff_num %}
+            <p style="text-align: center;">The results of differential expression analysis of all genes have been shown.<a href="/GSE{{gse}}/index=2/{{diff_num.split('_all')[0]}}/0"><u> View only whose adj.P.Value < 0.05</u></a><p>
+        {% elif if_all %}
+        <p style="text-align: center;">Only genes of which adj.P.Value < 0.05 are shown.<a href="/GSE{{gse}}/index=2/{{diff_num}}_all/0"> <u>View the results of differential expression analysis of all genes</u></a><p>
+        {% endif %}
+        
+        <div class="panel-note col-md-8 col-md-offset-2">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><span class="glyphicon glyphicon-file" aria-hidden="true" ></span> Page Introduction</h3>
+                        </div>
+                        <div class="panel-body" style="font-size: 15px;">
+                            ​If you want to view the results of this study, hover your mouse over the “Diff” button on the navigation bar and a drop-down menu of options will appear. A comparison between all groups is provided, and if there is an NA displayed after the name, It means that there are no differentially expressed genes in this group. Whenever a comparison group is selected, all differentially expressed genes in this group are displayed by default. If you want to see all the genes in the study (including no differential expression), you can click on “View the results of differential expression analysis of all genes”.
+                        </div>
+                    </div>
+                </div>
+        {% if '_all' in diff_num  or diff_list[file_list.index(diff_num)] |length >1 %}
+        <div class="col-md-8 col-md-offset-2">
+        {% if gse not in ['16759_GPL8757','46131','46579','48552'] %}
+        <h4>SYMBOL:{{sym}}   ENTREZ:{{ent}}</h4>
+        <iframe src="{{pos}}" frameborder="0" width="100%"  height="500" ></iframe>
+        <table  data-toggle="table" data-sortable="true" data-url="/json/GSE{{gse}}/{{diff_num}}" data-pagination="true" data-page-number="{{page}}" data-page-Size="10" data-page-list=[10,20,50,100,500,10000] toolbar="#toolbar" data-side-pagination="true" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-show-export="true" >
+            <thead>
+                <tr>
+                    <th data-field="ENTREZ" data-sortable="true" data-formatter="LinkFormatter6">ENTREZ<sup>a</sup></th>
+                    <th data-field="SYMBOL" data-sortable="true" data-formatter="LinkFormatter6">SYMBOL<sup>b</sup></th>
+                    <th data-field="logFC" data-sortable="true">logFC<sup>c</sup></th>
+                    <th data-field="AveExpr" data-sortable="true">AveExpr<sup>d</sup></th>
+                    <th data-field="t" data-sortable="true">t<sup>e</sup></th>
+                    <th data-field="P_Value" data-sortable="true">P.Value<sup>f</sup></th>
+                    <th data-field="adj_P_Val" data-sortable="true">adj.P.Value<sup>g</sup></th>
+                    <th data-field="B" data-sortable="true">B<sup>h</sup></th>
+                    <th data-field="link" data-formatter="LinkFormatter9">More<sup>i</sup></th>
+                </tr>
+            </thead>
+        </table>
+        <div class="panel-note">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Notes</h3>
+                        </div>
+                        <div class="panel-body">
+                            <table class= "note-table">
+                                <tr>
+                                    <td><sup>a</sup>ENTREZ</td>
+                                    <td>-Gene Entrez ID. Click to view the multi-omics analysis of the gene in the database.</td>
+                                </tr>
+                                <tr>
+                                    <td><sup>b</sup>SYMBOL</td>
+                                    <td>-Gene symbol. Click to view the multi-omics analysis of the gene in the database.</td>
+                                </tr>
+                                <tr>
+                                    <td><sup>c</sup>logFC</td>
+                                    <td>-Logarithm of the multiple of gene differential expression.</td>
+                                </tr>
+                                <tr>
+                                    <td><sup>d</sup>AveExpr</td>
+                                    <td>-Average expression value in all samples in which the probe set is located.</td>
+                                </tr>
+                                <tr>
+                                    <td><sup>e</sup>t</td>
+                                    <td>-The t-value in the T test between two sets of expression values after Bayesian adjustment.</td>
+                                </tr>
+                                <tr>
+                                    <td><sup>f</sup>P.Value</td>
+                                    <td>-P value calculated by Bayesian test.</td>
+                                </tr>
+                                <tr>
+                                    <td><sup>g</sup>adj.P.Val</td>
+                                    <td>-P value after BH adjustment.</td>
+                                </tr>
+                                <tr>
+                                    <td><sup>h</sup>B</td>
+                                    <td>-The logarithmic value of the standard deviation calculated by empirical Bayesian. Through the table we show, you can sort any column, query the items you are interested in in the table, or download the whole table directly (support downloading to txt,csv and other formats).</td>
+                                </tr>
+                                <tr>
+                                    <td><sup>i</sup>More</td>
+                                    <td>-Clicking on <i>view in jBrowse</i> will refresh jBrowse and locate the gene.</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+    {% else %}
+        <table  data-toggle="table" data-sortable="true" data-url="/json/GSE{{gse}}/{{diff_num}}" data-pagination="true" data-page-number="1" data-page-Size="10" data-page-list=[10,20,50,100,500,10000] toolbar="#toolbar" data-side-pagination="true" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-show-export="true" >
+            <thead>
+                <tr>
+                    <th data-field="SYMBOL" data-sortable="true" >miRNA_ID<sup>a</sup></th>
+                    <th data-field="logFC" data-sortable="true">logFC<sup>b</sup></th>
+                    <th data-field="AveExpr" data-sortable="true">AveExpr<sup>c</sup></th>
+                    <th data-field="t" data-sortable="true">t<sup>d</sup></th>
+                    <th data-field="P_Value" data-sortable="true">P.Value<sup>e</sup></th>
+                    <th data-field="adj_P_Val" data-sortable="true">adj.P.Value<sup>f</sup></th>
+                    <th data-field="B" data-sortable="true">B<sup>g</sup></th>
+                </tr>
+            </thead>
+        </table>
+        <div class="panel-note">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Notes</h3>
+                        </div>
+                        <div class="panel-body">
+                            <table class= "note-table">
+                                <tr>
+                                    <td><sup>a</sup>miRNA_ID</td>
+                                    <td>-miRNA ID.</td>
+                                </tr>
+                                <tr>
+                                    <td><sup>b</sup>logFC</td>
+                                    <td>-Logarithm of the multiple of gene differential expression.</td>
+                                </tr>
+                                <tr>
+                                    <td><sup>c</sup>AveExpr</td>
+                                    <td>-Average expression value in all samples in which the probe set is located.</td>
+                                </tr>
+                                <tr>
+                                    <td><sup>d</sup>t</td>
+                                    <td>-The t-value in the T test between two sets of expression values after Bayesian adjustment.</td>
+                                </tr>
+                                <tr>
+                                    <td><sup>e</sup>P.Value</td>
+                                    <td>-P value calculated by Bayesian test.</td>
+                                </tr>
+                                <tr>
+                                    <td><sup>f</sup>adj.P.Val</td>
+                                    <td>-P value after BH adjustment.</td>
+                                </tr>
+                                <tr>
+                                    <td><sup>g</sup>B</td>
+                                    <td>-The logarithmic value of the standard deviation calculated by empirical Bayesian. Through the table we show, you can sort any column, query the items you are interested in in the table, or download the whole table directly (support downloading to txt,csv and other formats).</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+    {% endif %}
+        {% else %}
+        <div class="panel-note col-md-8 col-md-offset-2">
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-warning-sign" aria-hidden="true" style="color: rgb(255, 70, 32);"></span> Unable to View</h3>
+                </div>
+                <div class="panel-body" style="font-size: 15px;">
+                    No differentially expressed genes.
+            <p style="text-align: center;padding-top: 30px;"><a href="/GSE{{gse}}/index=2/{{diff_num}}_all/0"> <u>View the results of differential expression analysis of all genes</u></a></p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% elif num == '3' %}
+        <h1 style="text-align: center;padding: 45px 60px;">GSE{{ gse }} {{ diff_num }}</h1>
+        <div class="panel-note col-md-8 col-md-offset-2">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><span class="glyphicon glyphicon-file" aria-hidden="true" ></span> Page Introduction</h3>
+                        </div>
+                        <div class="panel-body" style="font-size: 15px;">
+                            ​To explore the biological significance of differential genes. We have annotated these genes into several biological pathways. Currently used annotations include KEGG annotation and GO annotation, and the annotation page provides rich annotation information.
+                            <h5 style="padding-top: 10px;">Analysed by <a href="http://www.webgestalt.org/" target=_blank>WEB-based GEne SeT AnaLysis Toolkit</a>.<a href="http://www.webgestalt.org/"  target=_blank><img src="{{ url_for('static', filename='img/webgestalt.png') }}" alt="Logo" style="width: 20px;height: 20px;"></a></h5>
+                        </div>
+                    </div>
+                </div>
+        {% if diff_num.split('_')[-1] == 'NA' %}
+        <div class="panel-note col-md-8 col-md-offset-2">
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-warning-sign" aria-hidden="true" style="color: rgb(255, 70, 32);"></span> Unable to View</h3>
+                </div>
+                <div class="panel-body" style="font-size: 15px;">
+                    Differentially expressed genes are too few to annotate.
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <div class="col-md-10 col-md-offset-1">
+        {% if diff_num.split('_')[-1] == 'GO(BP)' %}
+        <iframe src="{{url_for('static',filename='series/'+tp+'/GSE'+gse+'/diff.'+diff_num.split('_GO')[0]+'.GSE'+gse+'/1.html')}}" frameborder="0" width="100%" scrolling="Yes" height="1800"></iframe>
+        {% elif diff_num.split('_')[-1] == 'GO(CC)' %}
+        <iframe src="{{url_for('static',filename='series/'+tp+'/GSE'+gse+'/diff.'+diff_num.split('_GO')[0]+'.GSE'+gse+'/2.html')}}" frameborder="0" width="100%" scrolling="Yes" height="1800"></iframe>
+        {% elif diff_num.split('_')[-1] == 'GO(MF)' %}
+        <iframe src="{{url_for('static',filename='series/'+tp+'/GSE'+gse+'/diff.'+diff_num.split('_GO')[0]+'.GSE'+gse+'/3.html')}}" frameborder="0" width="100%" scrolling="Yes" height="1800"></iframe>
+        {% elif diff_num.split('_')[-1] == 'KEGG' %}
+        <iframe src="{{url_for('static',filename='series/'+tp+'/GSE'+gse+'/diff.'+diff_num.split('_KEGG')[0]+'.GSE'+gse+'/kegg.html')}}" frameborder="0" width="100%" scrolling="Yes" height="1800"></iframe>
+        {% endif %}
+    </div>
+        {% elif num == '4' %}
+        {% if diff_num == 'PCA' %}
+        <h1 style="text-align: center;padding: 30px 60px;">GSE{{ gse }} PCA</h1>
+        <div class="row">
+        <div class="panel-note col-md-8 col-md-offset-2">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><span class="glyphicon glyphicon-file" aria-hidden="true" ></span> Page Introduction</h3>
+                        </div>
+                        <div class="panel-body" style="font-size: 15px;">
+                            Visualization is an important element of the research. PCA (Principal Components Analysis) is a principal component analysis, an unsupervised algorithm, the most common method in dimension reduction, which can reduce the dimension of data without tags. Therefore, we often use PCA in the omics data to detect the distribution between different groups of samples, to check if there are outlier samples and sample changes.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% if tp == 'protein' %}
+        <div style="text-align:center;padding: 20px;">
+            <embed src="{{url_for('static',filename='series/'+tp+'/GSE'+gse+'/PCA.svg')}}" frameborder="0" width="50%" scrolling="No" height="600"></embed>
+        </div>
+        {% else %}
+        <div style="text-align:center;padding: 20px;">
+            <embed src="{{url_for('static',filename='series/'+tp+'/GSE'+gse+'/PCA.pdf')}}" frameborder="0" width="50%" scrolling="No" height="600"></embed>
+        </div>
+        {% endif %}
+        
+        {% if gse|diff_txt != '' %}
+        <div class="row">
+        <p style="text-align: center;padding: 4px;">{%for str in gse|diff_txt %}{{str}}<br>{% endfor %}</p>
+    </div>
+        {% endif %}
+        {% elif diff_num.split('_')[-1] == 'valcano' %}
+        <h1 style="text-align: center;padding: 45px 60px;">GSE{{ gse }} {{ diff_num.split('_valcano')[0] }} Volcano Plot</h1>
+        <div class="panel-note col-md-8 col-md-offset-2">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-file" aria-hidden="true" ></span> Page Introduction</h3>
+                </div>
+                <div class="panel-body" style="font-size: 15px;">
+                    Visualization is an important element of the research. Volcanic maps are often used to display genes that are significantly differentially expressed. There are two key standards: a significant P value (<0.05), and the change multiple of Fold Change (>=2.0). Differentially expressed genes that satisfy these two conditions are shown in red (indicating ascending) or green (indicating descending) points.
+                </div>
+            </div>
+        </div>
+        <div style="text-align:center;padding: 20px;">
+            <embed src="{{url_for('static',filename='series/'+tp+'/GSE'+gse+'/diff.'+diff_num.split('_valcano')[0]+'.GSE'+gse+'/diff.'+diff_num.split('_valcano')[0]+'.GSE'+gse+'.pdf')}}" frameborder="0" width="50%" scrolling="No" height="600"></embed>
+        </div>
+        {% elif diff_num.split('_')[-1] == 'PPI' %}
+        {% if ('diff.'+diff_num.split('_PPI')[0]+'.GSE'+gse) | ppi_link != '' %}
+        <h1 style="text-align: center;padding: 45px 60px;">GSE{{ gse }} {{ diff_num }} Protein-Protein Interaction Networks</h1>
+        <div class="col-md-10 col-md-offset-1" style="padding: 20px;">
+            <iframe src="{{('diff.'+diff_num.split('_PPI')[0]+'.GSE'+gse) | ppi_link }}" frameborder="0" width="100%" scrolling="yes" height="2200"></iframe>
+        </div>
+        {% else %}
+        <div class="panel-note col-md-8 col-md-offset-2">
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-warning-sign" aria-hidden="true" style="color: rgb(255, 70, 32);"></span> Unable to View</h3>
+                </div>
+                <div class="panel-body" style="font-size: 15px;">
+                    Differentially expressed genes are too few to draw Protein-Protein Interaction Networks.
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% elif diff_num.split('_')[-1] == 'NA' %}
+        <h1 style="text-align: center;padding: 45px 60px;">GSE{{ gse }} {{ diff_num }} Volcano Plot</h1>
+        <div class="panel-note col-md-8 col-md-offset-2">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-file" aria-hidden="true" ></span> Page Introduction</h3>
+                </div>
+                <div class="panel-body" style="font-size: 15px;">
+                    Visualization is an important element of the research. Volcanic maps are often used to display genes that are significantly differentially expressed. There are two key standards: a significant P value (<0.05), and the change multiple of Fold Change (>=2.0). Differentially expressed genes that satisfy these two conditions are shown in red (indicating ascending) or green (indicating descending) points.
+                </div>
+            </div>
+        </div>
+        <div class="panel-note col-md-8 col-md-offset-2">
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-warning-sign" aria-hidden="true" style="color: rgb(255, 70, 32);"></span> Unable to View</h3>
+                </div>
+                <div class="panel-body" style="font-size: 15px;">
+                Differentially expressed genes are too few to draw a Volcano Plot.
+                </div>
+            </div>
+        </div>        
+        {% endif %}
+        {% endif %}
+        {% else %}
+        <div class="gsedes">
+            <p>There is not GSE{{gse}}.</p>
+        </div>
+        {% endif %}
+    </div>
+{%endblock%}
+{% block script %}
+        <script type="text/javascript">
+            {% if file_list|length!=1 %}
+        var tempData = {
+          labels : [{% for path in file_list %}'{{path}}',{% endfor %}],
+          datasets : [{
+              label: "Differentially Expressed Genes",
+                backgroundColor: '#FF4500',
+                data:[{% for gene in diff_list[0:-1] %}{{gene|length -1}},{% endfor %}{{diff_list[-1]|length -1}}]
+          },
+        ]};
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myLineChart = new Chart(ctx, {
+            type: 'bar', 
+            data: tempData,
+            options: {
+                title: 
+                {
+                display: true,
+                text: 'Number of Differentially Expressed Genes in GSE{{gse}}',
+                },
+                scales: {
+                yAxes: [{
+                    ticks:{
+                    beginAtZero: true,
+                },
+                }],
+                },
+            }
+        });
+        {% else %}
+        var tempData1 = {
+          labels : ["adj.P.Val < 0.05","adj.P.Val ≥ 0.05"],
+          datasets : [{
+                backgroundColor: ['#FF4500','#DBDBDB'],
+                data:[{{diff_list[0]|length -1}},{{(gse|all_num)|int -diff_list[0]|length}}],
+          }]
+        };
+        var ctx1 = document.getElementById('myChart1').getContext('2d');
+        var myLineChart1 = new Chart(ctx1, {
+            type: 'doughnut', 
+            data: tempData1,
+            options: {
+                title: 
+                {
+                display: true,
+                text: 'Number of Differentially Expressed Genes in GSE{{gse}}',
+                },
+            }
+        });
+     {% endif %}
+
+
+        </script>
+{%endblock%}

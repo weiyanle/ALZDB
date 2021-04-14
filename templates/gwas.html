@@ -1,0 +1,283 @@
+{% extends "base.html" %}
+{% block title %}
+Summary|GWAS - ALZDB
+{% endblock %}
+{% block main %}
+{% block style %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/slick/slick.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/slick/slick-theme.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/slick/iconfont.css') }}">
+<style type="text/css">
+.col-md-6 {
+    padding: 20px;
+    border-top: 1px solid #edf0f2;
+}
+
+.col-md-4 {
+    padding: 20px;
+    border-top: 1px solid #edf0f2;
+}
+</style>
+{% endblock %}
+<!--========== SLIDER ==========-->
+<div class="promo-block" style="background: url({{ url_for('static', filename='img/background.png') }}) ;background-size: 100%;padding: 120px 0 10px;">
+    <h1 class="promo-block-title" style="font-size: 50px;text-align: left;padding-left: 50px">GWAS Results</h1>
+</div>
+<!--========== SLIDER ==========-->
+<ul class="navbaradd">
+    <li class="js_nav-item nav-item"><a class="left"><b>GWAS</b></a></li>
+    <li class="js_nav-item nav-item"><a href="#jb"><b>Genome Browser</b></a></li>
+    <li class="js_nav-item nav-item"><a href="#tb"><b>GWAS Results Table</b></a></li>
+    <li class="js_nav-item nav-item"><a href="#pl"><b>GWAS Results Plots</b></a></li>
+</ul>
+<div class="container" style="margin-top: 30px;">
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1" style="padding: 20px;">
+            <div class="sumtext">
+                <h3>Abstract</h3>
+                <p>We performed a GWAS (Genome-Wide Association Study) analysis on AD and Control samples to identify SNP loci associated with Alzheimer’s disease and annotate these sites on genes in order to find out the possible influence of genome variation on AD.</p>
+            </div>
+            <div style="text-align: center;padding-top: 30px;">
+                <h2 id="jb">GWAS in Genome Browser</h2>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1" style="padding: 20px;border: 2px #000">
+            <iframe src="http://106.14.221.173/jbrowse/?loc=chr{{chro}}%3A{{pos|int -150}}..{{pos|int +150}}&tracks=DNA%2Cmysnps%2CGRCh37&highlight=" frameborder="0" width="100%" height="500"></iframe>
+        </div>
+        </div>
+    </div>
+    <div id="tb" class="row">
+        <div style="text-align: center;padding-top: 30px;">
+            <h2>GWAS Results in Chr{{chro}}</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+        <p style="text-align: center;">Due to the huge amount of data, only the first 1000 SNPs of the chromosome are displayed.<a href="/#search"><u> Click here to find by location or gene ID.</u></a></p>
+            <table data-toggle="table" data-sortable="true" data-url="/json/search/type=chrID/input={{chro}}" data-pagination="true" data-page-number="1" data-page-Size="10" data-page-list=[10,20,50,100,500,1000] toolbar="#toolbar" data-side-pagination="true" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true">
+            <thead>
+                <tr>
+                    <th data-field="chrID" data-sortable="true">chrID<sup>a</sup></th>
+                    <th data-field="position" data-sortable="true">position<sup>b</sup></th>
+                    <th data-field="rsID" data-sortable="true" data-formatter= "LinkFormatter1">rsID<sup>c</sup></th>
+                    <th data-field="before" data-sortable="true">before<sup>d</sup></th>
+                    <th data-field="after" data-sortable="true">after<sup>e</sup></th>
+                    <th data-field="beta" data-sortable="true">beta<sup>f</sup></th>
+                    <th data-field="P_Value" data-sortable="true">P.Value<sup>g</sup></th>
+                    <th data-field="link" data-formatter="LinkFormatter2">More</th>
+                </tr>
+            </thead>
+        </table>
+        <div class="panel-note" style="text-align: left;">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Notes</h3>
+                </div>
+                <div class="panel-body">
+                    <table class= "note-table">
+                        <tr>
+                            <td><sup>a</sup>chrID</td>
+                            <td>-Chromosome number.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>b</sup>position</td>
+                            <td>-Location of SNP on chromosome.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>c</sup>rsID</td>
+                            <td>-dbsnp IDs.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>d</sup>before</td>
+                            <td>-Bases on the Reference Genome.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>e</sup>after</td>
+                            <td>-Bases after mutation.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>f</sup>beta</td>
+                            <td>-The beta value indicates the degree of correlation between the SNP and disease(AD). If the beta value is greater than 0, the SNP is positively correlated with AD. On the contrary, it is negatively correlated with AD.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>g</sup>P.Value</td>
+                            <td>-R represents the significant degree of SNP. If P.Value < 0.05, the difference is significant.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>h</sup>adj.P.Val</td>
+                            <td>-P value after BH adjustment.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>i</sup>More</td>
+                            <td>-click on <i>view in jBrowse</i> so that you can turn to the genome browse to see this SNP.</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+        <div class="footer">
+        <div class="section-seperator">
+            <div class="content-md container">
+                <div class="row">
+                    <div class="col-sm-6 sm-margin-b-30">
+                        <!-- List -->
+                        <h1>GWAS RESULTS TABLE FOR EACH CHROMOSOME</h1>
+                        <!-- End List -->
+                    </div>
+                    <div class="col-sm-1 sm-margin-b-30">
+                        <!-- List -->
+                        <ul class="list-unstyled footer-list">
+                            <li class="footer-list-item"><a href="/GWAS/chr1">Chr1</a></li>
+                            <li class="footer-list-item"><a href="/GWAS/chr2">Chr2</a></li>
+                            <li class="footer-list-item"><a href="/GWAS/chr3">Chr3</a></li>
+                            <li class="footer-list-item"><a href="/GWAS/chr4">Chr4</a></li>
+                        </ul>
+                        <!-- End List -->
+                    </div>
+                    <div class="col-sm-1 sm-margin-b-30">
+                        <!-- List -->
+                        <ul class="list-unstyled footer-list">
+                            <li class="footer-list-item"><a href="/GWAS/chr5">Chr5</a></li>
+                            <li class="footer-list-item"><a href="/GWAS/chr6">Chr6</a></li>
+                            <li class="footer-list-item"><a href="/GWAS/chr7">Chr7</a></li>
+                            <li class="footer-list-item"><a href="/GWAS/chr8">Chr8</a></li>
+                        </ul>
+                        <!-- End List -->
+                    </div>
+                    <div class="col-sm-1 sm-margin-b-30">
+                        <!-- List -->
+                        <ul class="list-unstyled footer-list">
+                            <li class="footer-list-item"><a href="/GWAS/chr9">Chr9</a></li>
+                            <li class="footer-list-item"><a href="/GWAS/chr10">Chr10</a></li>
+                            <li class="footer-list-item"><a href="/GWAS/chr11">Chr11</a></li>
+                            <li class="footer-list-item"><a href="/GWAS/chr12">Chr12</a></li>
+                        </ul>
+                        <!-- End List -->
+                    </div>
+                    <div class="col-sm-1 sm-margin-b-30">
+                        <!-- List -->
+                        <ul class="list-unstyled footer-list">
+                            <li class="footer-list-item"><a href="/GWAS/chr13">Chr13</a></li>
+                            <li class="footer-list-item"><a href="/GWAS/chr14">Chr14</a></li>
+                            <li class="footer-list-item"><a href="/GWAS/chr15">Chr15</a></li>
+                            <li class="footer-list-item"><a href="/GWAS/chr16">Chr16</a></li>
+                        </ul>
+                        <!-- End List -->
+                    </div>
+                    <div class="col-sm-1 sm-margin-b-30">
+                        <!-- List -->
+                        <ul class="list-unstyled footer-list">
+                            <li class="footer-list-item"><a href="/GWAS/chr17">Chr17</a></li>
+                            <li class="footer-list-item"><a href="/GWAS/chr18">Chr18</a></li>
+                            <li class="footer-list-item"><a href="/GWAS/chr19">Chr19</a></li>
+                            <li class="footer-list-item"><a href="/GWAS/chr20">Chr20</a></li>
+                        </ul>
+                        <!-- End List -->
+                    </div>
+                    <div class="col-sm-1 sm-margin-b-30">
+                        <!-- List -->
+                        <ul class="list-unstyled footer-list">
+                            <li class="footer-list-item"><a href="/GWAS/chr21">Chr21</a></li>
+                            <li class="footer-list-item"><a href="/GWAS/chr22">Chr22</a></li>
+                        </ul>
+                        <!-- End List -->
+                    </div>
+                </div>
+                <!--// end row -->
+            </div>
+        </div>
+    </div>
+    <div id="pl" class="row">
+        <div class="col-md-6 col-md-offset-3" style="text-align: center;padding-top: 30px;">
+            <h2>Plots of GWAS results</h2>
+            <h3>Manhattan plots for each Chromosome</h3>
+        </div>
+    </div>
+    <section class="business bg-grey roomy-70">
+        <div class="container">
+            <div class="row">
+                <div class="main_business">
+                    <div class="col-md-8 col-md-offset-2">
+                        <div class="business_slid">
+                            <div class="slid_shap bg-grey"></div>
+                            <div class="business_items text-center">
+                                <div class="business_item">
+                                    <div class="business_img" style="padding-left: 70px;padding-right: 70px;">
+                                        <img src="{{ url_for('static', filename='img/GWAS_CHR/chr_all.png') }}" alt="" width="100%" />
+                                    </div>
+                                </div>
+                                {% for i in range(1,22)%}
+                                <div class="business_item">
+                                    <div class="business_img" style="padding-left: 70px;padding-right: 70px;">
+                                        <img src="{{ url_for('static', filename='img/GWAS_CHR/chr'+i|string+'.png') }}" alt="" width="100%" />
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-10 col-md-offset-1">
+                <div class="panel-note" style="text-align: left;">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Notes</h3>
+                        </div>
+                        <div class="panel-body" style="font-size: 15px;">
+                            <table class="note-table">
+                                Manhattan plot draws the p-value of all SNP loci sequentially on the whole genome after GWAS analysis.
+                                In order to express the results more intuitively, P-value is usually converted to-log10 (p-value).
+                                In this way, the height of the gene locus-log10 (p-value) on the Y axis corresponds to the degree of association with phenotypic traits or diseases, and the stronger the association degree (i.e., the lower the p-value) is, the higher the correlation degree is.
+                                Generally speaking, due to linkage disequilibrium (LD) relationships, SNPs around strongly associated sites show similar signal intensities and decrease in turn to both sides.
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <div style="text-align: center;padding-top: 30px;">
+                        <h3>QQ Plot</h3>
+                    </div>
+                    <div class="business_slid">
+                        <div class="slid_shap bg-grey"></div>
+                        <div class="business_items text-center">
+                            <div class="business_item">
+                                <div class="business_img" style="padding-left: 70px;padding-right: 70px;">
+                                    <img src="{{ url_for('static', filename='img/GWAS_CHR/qq.png') }}" alt="" width="100%" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-10 col-md-offset-1">
+                <div class="panel-note" style="text-align: left;padding-top: 30px;">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Notes</h3>
+                        </div>
+                        <div class="panel-body" style="font-size: 15px;">
+                            <table class="note-table">
+                                QQ plot represents the comparison of two sets of values. These two sets of values are the P value observed by GWAS results and the expected P value. If the selected statistical model is correct, the P value values of the two groups should be consistent. Then, two sets of values (log10) are arranged from small to large and drawn on the scatter plot. All points should be near the diagonal line.<br>&nbsp;<br>
+                                The ideal result type is that the lower left corner of the scatter plot is a straight line. This region represents the sites with low significance, i.e. locations that are not related to the traits. The P value of these sites should be consistent with the expected values, which shows that the analysis model is reasonable. In the upper right corner of the graph, the site with higher significance is a potential candidate site related to traits. These points are above the diagonal line, i.e. the P.Value values of the loci exceed the expected values, which indicates that the effects of these loci exceed the random effects, and further indicates that these loci are significantly related to the traits.
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section><!-- End off Business section -->
+
+    {%endblock%}
+    {% block script %}
+    <script src="{{ url_for('static', filename='css/slick/slick.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='css/slick/slick.min.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='css/slick/plugins.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='css/slick/main.js') }}" type="text/javascript"></script>
+    {% endblock %}

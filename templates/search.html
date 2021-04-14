@@ -1,0 +1,667 @@
+{% extends "base.html" %}
+{% block title %}
+Search - ALZDB
+{% endblock %}
+{% block main %}
+<div id="info"></div>
+<!--========== SLIDER ==========-->
+<div class="promo-block" style="background: url({{ url_for('static', filename='img/background.png') }});background-size: 100%;padding: 120px 0 10px;">
+    <h1 class="promo-block-title" style="font-size: 50px;text-align: left;padding-left: 50px">Search</h1>
+</div>
+{% if 'all_' in type%}
+<ul class="navbaradd">
+    <li class="js_nav-item nav-item"><a class="left"><b>{% if 'gene' in type%}Gene{% else %}Position{%endif%}</b></a></li>
+    <li class="js_nav-item nav-item"><a href="#info"><b>Information</b></a></li>
+    <li class="js_nav-item nav-item"><a href="#gwas"><b>Genome</b></a></li>
+    <li class="js_nav-item nav-item"><a href="#diff"><b>Tanscriptome & Protome</b></a></li>
+    <li class="js_nav-item nav-item"><a href="#methy"><b>Epigenome</b></a></li>
+</ul>
+{% endif %}
+    {% if 'all_' not in type%}
+    <h1 style="text-align: center;padding-top: 30px;">Search {% if type == 'rsID' %}rsID in GWAS{% elif type == 'chrID' %}chrID in GWAS{% elif type == 'gse' or type== 'gse_all'%}GSE in Differential Expression{% else %}{{tp1}} in {% if tp0=='GWAS' %}GWAS{% elif tp0=='trans' %}Differential Expression Profiling by Array{% elif tp0=='pro' %}Protein Profiling by Protein Array{% elif tp0=='methy' %}Methylation{% endif %}{% endif %} : "{{input}}"</h1>
+    {% endif %}
+<div style="text-align: center;">
+    {% if 'geneID' in type %}
+    <div class="row">
+    <div class="col-md-6 col-md-offset-3" style="padding: 30px">
+    <div class="bstable">
+    <h4>Gene Infomation</h4>
+        <table  class="table table-striped" style="font-weight: bold;">
+            <tr>
+                <td>Symbol</td>
+                <td>{{poslist[3]}} <a href="https://www.genecards.org/cgi-bin/carddisp.pl?gene={{poslist[3]}}"  target=_blank><span class="glyphicon glyphicon-new-window"></span></a></td>
+            </tr>
+            <tr>
+                <td>Name</td>
+                <td>{{poslist[9]}}</td>
+            </tr>
+            <tr>
+                <td>ENTREZ gene ID</td>
+                <td>{{poslist[7]}} <a href="https://www.ncbi.nlm.nih.gov/gene/{{poslist[7]}}"  target=_blank><span class="glyphicon glyphicon-new-window"></span></a></td>
+            </tr>
+            <tr>
+                <td>Ensembl gene ID</td>
+                {% if poslist[6] ==None %}
+                <td>-</td>
+                {% else %}
+                <td>{{poslist[6]}} <a href="http://www.ensembl.org/Homo_sapiens/geneview?gene={{poslist[8]}}"  target=_blank><span class="glyphicon glyphicon-new-window"></span></a></td>
+                {% endif %}
+            </tr>
+            <tr>
+                <td>HGNC gene ID</td>
+                  {% if poslist[8] ==None %}
+                <td>-</td>
+                {% else %}
+                <td>{{poslist[8]}} <a href="https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/{{poslist[8]}}"  target=_blank><span class="glyphicon glyphicon-new-window"></span></a></td>
+                {% endif %}
+            </tr>
+            <tr>
+                <td>UCSC gene ID</td>
+                {% if poslist[5] ==None %}
+                <td>-</td>
+                {% else %}
+                <td>{{poslist[5]}}</td>
+                {% endif %}
+            </tr>
+            <tr>
+                <td>RefSeq</td>
+                {% if poslist[4] ==None %}
+                <td>-</td>
+                {% else %}
+                <td>{{poslist[4]}} <a href="https://www.ncbi.nlm.nih.gov/nuccore/{{poslist[4]}}"  target=_blank><span class="glyphicon glyphicon-new-window"></span></a></td>
+                {% endif %}
+            </tr>
+            <tr>
+                <td>Position</td>
+                <td>{{poslist[0]}}:{{poslist[1]}}-{{poslist[2]}}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+    </div>
+    <div class="col-md-8 col-md-offset-2" >
+    <div class="bstable">
+        <h4>jBrowse</h4>
+        <iframe src="{{poslist[10]}}" frameborder="0" width="100%" height="500"></iframe>
+    </div>
+    </div>
+    {% endif %}
+    {% if 'position' in type %} 
+    <div class="row">
+    <div class="col-md-6 col-md-offset-3" style="padding: 30px;">
+    <div class="bstable">
+    <h4>Position Infomation</h4>
+        <table  class="table table-striped" style="font-weight: bold;">
+            <tr>
+                <td>Position</td>
+                <td>{{input}}</td>
+            </tr>
+            <tr>
+                <td>Gene</td>
+                {% if (input|contain_gene)|length ==0 %}
+                <td>No matching gene</td>
+                {% else %}
+                <td>{%for gene in input|contain_gene%}<a href="/search/type=all_geneID/input={{gene[0]}}">{{gene[0]}}(ENTREZ)  {{gene[1]}}(SYMBOL)</a><br>{%endfor%}</td>
+                {% endif %}
+            </tr>
+        </table>
+        </div> 
+    </div>
+</div>
+    <div class="row">
+    <div class="col-md-8 col-md-offset-2" style="padding-top: 30px;padding-bottom: 80px;">
+    <div class="bstable">
+        <h4>jBrowse</h4>
+        {% if '-' in input %}
+        <iframe src="http://106.14.221.173/jbrowse/?loc={{input.split(':')[0]}}%3A{{(input.split(':')[1]).split('-')[0]}}..{{input.split('-')[1]}}&tracks=mysnps%2CGRCh37%2Cmethylation3%2Cmethylation2%2Cmethylation&highlight=" frameborder="0" width="100%" height="500"></iframe>
+        {% else %}
+        <iframe src="http://106.14.221.173/jbrowse/?loc={{input.split(':')[0]}}%3A{{input.split(':')[1]|int -10000}}..{{input.split(':')[1]|int +10000}}&tracks=mysnps%2CGRCh37%2Cmethylation3%2Cmethylation2%2Cmethylation&highlight=" frameborder="0" width="100%" height="500"></iframe>
+        {% endif %}
+        </div>
+    </div>
+</div>
+    {% endif %}
+    {% if type == 'rsID' %}
+    <div class="row">
+    <div class="col-md-8 col-md-offset-2" style="padding-top: 30px;padding-bottom: 80px;">
+    <div class="bstable">
+        <h4>jBrowse</h4>
+        <iframe src="{{input|snp_pos}}" frameborder="0" width="100%" height="500"></iframe>
+        </div>
+    </div>
+</div>
+    {% endif %}
+    <div id="gwas"></div>
+    {% if type == 'rsID' or type == 'chrID' or tp0 == 'GWAS' or tp0 == 'all'%}
+    <div class="col-md-8 col-md-offset-2" >
+    <div class="bstable">
+        <h2>Genome</h2>
+        <h4>SNP(s) by Genome-Wide Association Study</h4>
+        {% if type=='chrID' %}
+        <p>Due to the huge amount of data, only the first 1000 SNPs of the chromosome are displayed.<a href="/#search"><u> Click here to find by location or gene ID.</u></a></p>
+        {% endif %}
+        <table data-toggle="table" data-sortable="true" data-url="/json/search/type={% if type == 'rsID' or  type == 'chrID' or tp0 == 'GWAS'%}{{type}}{% elif tp0 == 'all'%}{{'GWAS_'+tp1}}{% endif %}/input={{input}}" data-pagination="true" data-page-number="1" data-page-Size="10" data-page-list=[10,20,50,100,500,10000] toolbar="#toolbar" data-side-pagination="true" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true">
+            <thead>
+                <tr>
+                    <th data-field="chrID" data-sortable="true">chrID<sup>a</sup></th>
+                    <th data-field="position" data-sortable="true">position<sup>b</sup></th>
+                    <th data-field="rsID" data-sortable="true" data-formatter= "LinkFormatter1">rsID<sup>c</sup></th>
+                    <th data-field="before" data-sortable="true">before<sup>d</sup></th>
+                    <th data-field="after" data-sortable="true">after<sup>e</sup></th>
+                    <th data-field="beta" data-sortable="true">beta<sup>f</sup></th>
+                    <th data-field="P_Value" data-sortable="true">P.Value<sup>g</sup></th>
+                </tr>
+            </thead>
+        </table>
+        <div class="panel-note" style="text-align: left;">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Notes</h3>
+                </div>
+                <div class="panel-body">
+                    <table class= "note-table">
+                        <tr>
+                            <td><sup>a</sup>chrID</td>
+                            <td>-Chromosome number.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>b</sup>position</td>
+                            <td>-Location of SNP on chromosome.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>c</sup>rsID</td>
+                            <td>-dbsnp IDs.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>d</sup>before</td>
+                            <td>-Bases on the Reference Genome.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>e</sup>after</td>
+                            <td>-Bases after mutation.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>f</sup>beta</td>
+                            <td>-The beta value indicates the degree of correlation between the SNP and disease(AD). If the beta value is greater than 0, the SNP is positively correlated with AD. On the contrary, it is negatively correlated with AD.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>g</sup>P.Value</td>
+                            <td>-R represents the significant degree of SNP. If P.Value < 0.05, the difference is significant.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>h</sup>More</td>
+                            <td>-click on <i>view in jBrowse</i> so that you can turn to the genome browse to see this SNP.</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="diff"></div>
+    </div>
+</div>
+    {%endif%}
+    {% if tp0 == 'gse' or tp0 == 'trans' or tp0 == 'pro' or tp0 == 'all'%}
+    <div class="col-md-10 col-md-offset-1" >
+    <div  class="bstable">
+        <h2>Transcriptome & Proteme</h2>
+        {% if input=='GSE16759' %} <p style="text-align: center;padding: 10px;">What is now shown is the result of mRNA (GPL570).<a href="/search/type={{type}}/input=GSE16759_GPL8757"><u> View the results of miRNA (GPL8757)</u></a></p>
+        {% elif input== 'GSE16759_GPL8757'%}
+        <p style="text-align: center;padding: 10px;">What is now shown is the result of miRNA (GPL8757).<a href="/search/type={{type}}/input=GSE16759/0"> <u>View the results of mRNA (GPL570)</u></a></p>
+        {% endif %}
+        {% if input not in ['GSE16759_GPL8757','GSE46131','GSE46579','GSE48552'] %}
+        {% if 'all_geneID' in type %}
+        <div class="row">
+        <div class="col-md-5 col-md-offset-1">
+        <canvas id="myChart1" height="250"></canvas>
+    </div>
+        <div class="col-md-5">
+        <canvas id="myChart" height="300"></canvas>
+    </div></div>
+    {% endif %}
+        {% if '_all' not in type %}
+        <p style="text-align: center;padding: 10px;">Only genes of which adj.P.Value < 0.05 are shown.<a href="/search/type={{type}}_all/input={{input}}"> <u>View the results of differential expression analysis of all genes</u></a></p>
+        {% else %}
+        <p style="text-align: center;padding: 10px;">The results of differential expression analysis of all genes have been shown.<a href="/search/type={{type.split('_all')[0]}}/input={{input}}"><u> View only whose adj.P.Value < 0.05</u> </a> </p> {% endif %} 
+        {%  if (tp0 == 'gse' and input not in ['29654','29676','39087','62283','74763'])or tp0 == 'trans' or tp0 == 'all' %}
+        <h4>Expression profiling by array</h4>
+        <table data-toggle="table" data-sortable="true" data-url="/json/search/type={% if tp0 !='all'%}{{type}}{% else %}{{'trans_'+type.split('all_')[1]}}{% endif %}/input={{input}}" data-pagination="true" data-page-number="1" data-page-Size="10" data-page-list=[10,20,50,100,500,10000] toolbar="#toolbar" data-side-pagination="true" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-show-export="true">
+            <thead>
+                <tr>
+                    <th data-field="GSE" data-sortable="true" data-formatter="LinkFormatter3">Accession<sup>a</sup></th>
+                    <th data-field="diff" data-sortable="true" data-formatter="LinkFormatter4">diff<sup>b</sup></th>
+                    <th data-field="type" data-sortable="true">type<sup>c</sup></th>
+                    <th data-field="tissue" data-sortable="true" data-formatter="LinkFormatter5">tissue<sup>d</sup></th>
+                    <th data-field="ENTREZ" data-sortable="true" data-formatter="LinkFormatter6">ENTREZ<sup>e</sup></th>
+                    <th data-field="SYMBOL" data-sortable="true" data-formatter="LinkFormatter6">SYMBOL<sup>f</sup></th>
+                    <th data-field="P_Value" data-sortable="true">P.Value<sup>g</sup></th>
+                    <th data-field="adj_P_Value" data-sortable="true">adj.P.Val<sup>h</sup></th>
+                    <th data-field="logFC" data-sortable="true">logFC<sup>i</sup></th>
+                    <th data-field="AveExpr" data-sortable="true">AveExpr<sup>j</sup></th>
+                    <th data-field="t" data-sortable="true">t<sup>k</sup></th>
+                    <th data-field="B" data-sortable="true">B<sup>l</sup></th>
+                    <th data-field="link" data-formatter="LinkFormatter10">More<sup>m</sup></th>
+                </tr>
+            </thead>
+        </table>
+        {% endif %}
+        {%  if (tp0 == 'gse' and input in ['29654','29676','39087','62283','74763'])or tp0 == 'pro' or tp0 == 'all' %}
+        <h4>Protein Profiling By Protein Array</h4>
+        <table data-toggle="table" data-sortable="true" data-url="/json/search/type={% if tp0 !='all'%}{{type}}{% else %}{{'pro_'+type.split('all_')[1]}}{% endif %}/input={{input}}" data-pagination="true" data-page-number="1" data-page-Size="10" data-page-list=[10,20,50,100,500,10000] toolbar="#toolbar" data-side-pagination="true" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-show-export="true">
+            <thead>
+                <tr>
+                    <th data-field="GSE" data-sortable="true" data-formatter="LinkFormatter3">Accession<sup>a</sup></th>
+                    <th data-field="diff" data-sortable="true" data-formatter="LinkFormatter4">diff<sup>b</sup></th>
+                    <th data-field="type" data-sortable="true">type<sup>c</sup></th>
+                    <th data-field="tissue" data-sortable="true" data-formatter="LinkFormatter5">tissue<sup>d</sup></th>
+                    <th data-field="ENTREZ" data-sortable="true" data-formatter="LinkFormatter6">ENTREZ<sup>e</sup></th>
+                    <th data-field="SYMBOL" data-sortable="true" data-formatter="LinkFormatter6">SYMBOL<sup>f</sup></th>
+                    <th data-field="P_Value" data-sortable="true">P.Value<sup>g</sup></th>
+                    <th data-field="adj_P_Value" data-sortable="true">adj.P.Val<sup>h</sup></th>
+                    <th data-field="logFC" data-sortable="true">logFC<sup>i</sup></th>
+                    <th data-field="AveExpr" data-sortable="true">AveExpr<sup>j</sup></th>
+                    <th data-field="t" data-sortable="true">t<sup>k</sup></th>
+                    <th data-field="B" data-sortable="true">B<sup>l</sup></th>
+                    <th data-field="link" data-formatter="LinkFormatter10">More<sup>m</sup></th>
+                </tr>
+            </thead>
+        </table>
+        {% endif %}
+        <div class="panel-note" style="text-align: left;">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Notes</h3>
+                </div>
+                <div class="panel-body">
+                    <table class= "note-table">
+                        <tr>
+                            <td><sup>a</sup>Accession</td>
+                            <td>-Accession number in NCBI GEO Datasets. Click to view the analysis results of the series in this database.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>b</sup>diff</td>
+                            <td>-Grouping of samples in the series for comparison. Click to view the results of the differential expression analysis for the compared group.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>c</sup>type</td>
+                            <td>-Type of expression data.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>d</sup>tissue</td>
+                            <td>-The organization of the series of samples, including major organizations and sub-organizations. If the name is too long, replace it with an ellipsis and place the mouse over it to display full.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>e</sup>ENTREZ</td>
+                            <td>-Gene Entrez ID. Click to view the multi-omics analysis of the gene in the database.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>f</sup>SYMBOL</td>
+                            <td>-Gene symbol. Click to view the multi-omics analysis of the gene in the database.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>g</sup>P.Value</td>
+                            <td>-P value calculated by Bayesian test.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>h</sup>adj.P.Val</td>
+                            <td>-P value after BH adjustment.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>i</sup>logFC</td>
+                            <td>-Logarithm of the multiple of gene differential expression.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>j</sup>AveExpr</td>
+                            <td>-Average expression value in all samples in which the probe set is located.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>k</sup>t</td>
+                            <td>-The t-value in the T test between two sets of expression values after Bayesian adjustment.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>l</sup>B</td>
+                            <td>-The logarithmic value of the standard deviation calculated by empirical Bayesian. Through the table we show, you can sort any column, query the items you are interested in in the table, or download the whole table directly (support downloading to txt,csv and other formats).</td>
+                        </tr>
+                        <tr>
+                            <td><sup>m</sup>More</td>
+                            <td>-Clicking on <i>view in jBrowse</i> will refresh jBrowse and locate the gene.</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <h4>Non-coding RNA profiling by high throughput sequencing</h4>
+        {% if '_all' not in type %}
+        <p style="text-align: center;padding: 10px;">Only genes of which adj.P.Value < 0.05 are shown.<a href="/search/type={{type}}_all/input={{input}}"> <u>View the results of differential expression analysis of all genes</u></a></p>
+        {% else %}
+        <p style="text-align: center;padding: 10px;">The results of differential expression analysis of all genes have been shown.<a href="/search/type={{type.split('_all')[0]}}/input={{input}}"><u> View only whose adj.P.Value < 0.05</u> </a> </p> {% endif %} 
+        <table data-toggle="table" data-sortable="true" data-url="/json/search/type={{type}}/input={{input}}" data-pagination="true" data-page-number="1" data-page-Size="10" data-page-list=[10,20,50,100,500,10000] toolbar="#toolbar" data-side-pagination="true" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-show-export="true">
+                        <thead>
+                            <tr>
+                                <th data-field="GSE" data-sortable="true" data-formatter="LinkFormatter3">Accession<sup>a</sup></th>
+                                <th data-field="diff" data-sortable="true" data-formatter="LinkFormatter4">diff<sup>b</sup></th>
+                                <th data-field="type" data-sortable="true">type<sup>c</sup></th>
+                                <th data-field="tissue" data-sortable="true" data-formatter="LinkFormatter5">tissue<sup>d</sup></th>
+                                <th data-field="miRNA_ID" data-sortable="true">miRNA_ID<sup>e</sup></th>
+                                <th data-field="P_Value" data-sortable="true">P.Value<sup>f</sup></th>
+                                <th data-field="adj_P_Value" data-sortable="true">adj.P.Val<sup>g</sup></th>
+                                <th data-field="logFC" data-sortable="true">logFC<sup>h</sup></th>
+                                <th data-field="AveExpr" data-sortable="true">AveExpr<sup>i</sup></th>
+                                <th data-field="t" data-sortable="true">t<sup>j</sup></th>
+                                <th data-field="B" data-sortable="true">B<sup>k</sup></th>
+                            </tr>
+                        </thead>
+                        </table>
+        <div class="panel-note" style="text-align: left;">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Notes</h3>
+                </div>
+                <div class="panel-body">
+                    <table class= "note-table">
+                        <tr>
+                            <td><sup>a</sup>Accession</td>
+                            <td>-Accession number in NCBI GEO Datasets. Click to view the analysis results of the series in this database.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>b</sup>diff</td>
+                            <td>-Grouping of samples in the series for comparison. Click to view the results of the differential expression analysis for the compared group.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>c</sup>type</td>
+                            <td>-Type of expression data.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>d</sup>tissue</td>
+                            <td>-The organization of the series of samples, including major organizations and sub-organizations. If the name is too long, replace it with an ellipsis and place the mouse over it to display full.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>e</sup>miRNA_ID</td>
+                            <td>-miRNA ID.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>f</sup>P.Value</td>
+                            <td>-P value calculated by Bayesian test.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>g</sup>adj.P.Val</td>
+                            <td>-P value after BH adjustment.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>h</sup>logFC</td>
+                            <td>-Logarithm of the multiple of gene differential expression.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>i</sup>AveExpr</td>
+                            <td>-Average expression value in all samples in which the probe set is located.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>j</sup>t</td>
+                            <td>-The t-value in the T test between two sets of expression values after Bayesian adjustment.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>k</sup>B</td>
+                            <td>-The logarithmic value of the standard deviation calculated by empirical Bayesian. Through the table we show, you can sort any column, query the items you are interested in in the table, or download the whole table directly (support downloading to txt,csv and other formats).</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+                        {% endif %}
+                    </div>
+                        <div id="methy"></div>
+    </div>
+    {%endif%}
+    {% if tp0 == 'methy' or tp0 == 'all' %}
+    <div class="col-md-10 col-md-offset-1" >
+    <div class="bstable" style="border-bottom: 0px;">
+        <h2>Epigenome</h2>
+        <h4>Methylation Profiling by Array</h4>
+        <table data-toggle="table" data-sortable="true" data-url="/json/search/type={% if tp0 == 'methy'%}{{type}}{%elif tp0 == 'all'%}{{'methy_'+tp1}}{%endif%}/input={{input}}" data-pagination="true" data-page-number="1" data-page-Size="10" data-page-list=[10,20,50,100,500,10000] toolbar="#toolbar" data-side-pagination="true" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-show-export="true">
+            <thead>
+                <tr>
+                    <th data-field="GSE" data-sortable="true" data-formatter="LinkFormatter7">Accession<sup>a</sup></th>
+                <th data-field="chr" data-sortable="true">chr<sup>b</sup></th>
+                <th data-field="pos" data-sortable="true">pos<sup>c</sup></th>
+                <th data-field="strand" data-sortable="true">strand<sup>d</sup></th>
+                <th data-field="Name" data-sortable="true">Name<sup>e</sup></th>
+                <th data-field="Probe_rs" data-sortable="true">Probe_rs</th>
+                <th data-field="Probe_maf" data-sortable="true">Probe_maf</th>
+                <th data-field="CpG_rs" data-sortable="true">CpG_rs</th>
+                <th data-field="CpG_maf" data-sortable="true">CpG_maf</th>
+                <th data-field="SBE_rs" data-sortable="true">SBE_rs</th>
+                <th data-field="SBE_maf" data-sortable="true">SBE_maf</th>
+                <th data-field="Islands_Name" data-sortable="true">Islands_Name<sup>f</sup></th>
+                <th data-field="Relation_to_Island" data-sortable="true">Relation_to_Island<sup>g</sup></th>
+                <th data-field="UCSC_RefGene_Name" data-sortable="true">UCSC_RefGene_Name<sup>h</sup></th>
+                <th data-field="UCSC_RefGene_Accession" data-sortable="true">UCSC_RefGene_Accession<sup>i</sup></th>
+                <th data-field="UCSC_RefGene_Group" data-sortable="true">UCSC_RefGene_Group<sup>j</sup></th>
+                <th data-field="Phantom" data-sortable="true">Phantom</th>
+                <th data-field="Enhancer" data-sortable="true">Enhancer<sup>k</sup></th>
+                <th data-field="HMM_Island" data-sortable="true">HMM_Island</th>
+                <th data-field="Regulatory_Feature_Name" data-sortable="true">Regulatory_Feature_Name</th>
+                <th data-field="Regulatory_Feature_Group" data-sortable="true">Regulatory_Feature_Group</th>
+                <th data-field="DHS" data-sortable="true">DHS</th>
+                <th data-field="logFC" data-sortable="true">logFC<sup>l</sup></th>
+                <th data-field="AveExpr" data-sortable="true">AveExpr<sup>m</sup></th>
+                <th data-field="t" data-sortable="true">t<sup>n</sup></th>
+                <th data-field="P_Value" data-sortable="true">P.Value<sup>o</sup></th>
+                <th data-field="adj_P_Val" data-sortable="true">adj.P.Val<sup>p</sup></th>
+                <th data-field="B" data-sortable="true">B<sup>q</sup></th>
+                </tr>
+            </thead>
+        </table>
+            <div class="panel-note" style="text-align: left;">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Notes</h3>
+            </div>
+            <div class="panel-body">
+                <table class="note-table">
+                    <tr>
+                        <td><sup>a</sup>Accession</td>
+                        <td>-Accession number in NCBI GEO Datasets. Click to view the analysis results of the series in this database.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>b</sup>chr</td>
+                        <td>-Chromosome number.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>c</sup>pos</td>
+                        <td>-Location of methylation sites in genome.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>d</sup>strand</td>
+                        <td>-Location of methylation sites in genome(positive or negative chains).</td>
+                    </tr>
+                    <tr>
+                        <td><sup>e</sup>Name</td>
+                        <td>-Name of methylation site.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>f</sup>Islands_Name</td>
+                        <td>-Methylation island name.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>g</sup>Relation_to_Island</td>
+                        <td>- UCSC reference gene name.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>h</sup>UCSC_RefGene_Name</td>
+                        <td>-Methylation degree of loci.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>i</sup>UCSC_RefGene_Accession</td>
+                        <td>UCSC reference gene accession</td>
+                    </tr>
+                    <tr>
+                        <td><sup>j</sup>UCSC_RefGene_Group</td>
+                        <td>-UCSC reference gene group.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>k</sup>Enhancer</td>
+                        <td>-The site in a enhancer sequence.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>l</sup>logFC</td>
+                        <td>-Logarithm of the multiple of gene differential expression.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>m</sup>AveExpr</td>
+                        <td>-Average expression value in all samples in which the probe set is located.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>n</sup>t</td>
+                        <td>-The t-value in the T test between two sets of expression values after Bayesian adjustment.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>o</sup>P.Value</td>
+                        <td>-P value calculated by Bayesian test.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>p</sup>adj.P.Val</td>
+                        <td>-P value after BH adjustment.</td>
+                    </tr>
+                    <tr>
+                        <td><sup>q</sup>B</td>
+                        <td>-The logarithmic value of the standard deviation calculated by empirical Bayesian. Through the table we show, you can sort any column, query the items you are interested in in the table, or download the whole table directly (support downloading to txt,csv and other formats).</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+<div class="col-md-8 col-md-offset-2" >
+        <h4>Methylation Profiling by High Throughput Sequencing</h4>
+        <table data-toggle="table" data-sortable="true" data-url="/json/search/methy_high/type={% if tp0 == 'methy'%}{{type}}{%elif tp0 == 'all'%}{{'methy_'+tp1}}{%endif%}/input={{input}}" data-pagination="true" data-page-number="1" data-page-Size="10" data-page-list=[10,20,50,100,500,10000] toolbar="#toolbar" data-side-pagination="true" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-show-export="true">
+            <thead>
+                <tr>
+                    <th data-field="GSE" data-sortable="true" data-formatter="LinkFormatter7">Accession<sup>a</sup></th>
+                    <th data-field="chr" data-sortable="true">chr<sup>b</sup></th>
+                    <th data-field="start" data-sortable="true">start<sup>c</sup></th>
+                    <th data-field="end" data-sortable="true">end<sup>d</sup></th>
+                    <th data-field="strand" data-sortable="true">strand<sup>e</sup></th>
+                    <th data-field="pvalue" data-sortable="true">pvalue<sup>f</sup></th>
+                    <th data-field="qvalue" data-sortable="true">qvalue<sup>g</sup></th>
+                    <th data-field="meth_diff" data-sortable="true">meth.diff<sup>h</sup></th>
+                <th data-field="link" data-sortable="true" data-formatter="LinkFormatter8">More<sup>i</sup></th>
+                </tr>
+            </thead>
+        </table>
+        <div class="panel-note" style="text-align: left;">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Notes</h3>
+                </div>
+                <div class="panel-body">
+                    <table class= "note-table">
+                        <tr>
+                            <td><sup>a</sup>Accession</td>
+                            <td>-Accession number in NCBI GEO Datasets. Click to view the analysis results of the series in this database.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>b</sup>chr</td>
+                            <td>-Chromosome number.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>c</sup>start</td>
+                            <td>-Initial position of methylation.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>d</sup>end</td>
+                            <td>-End position of methylation.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>e</sup>strand</td>
+                            <td>-Location of methylation sites in genome(positive or negative chains).</td>
+                        </tr>
+                        <tr>
+                            <td><sup>f</sup>pvalue</td>
+                            <td>-Credibility level.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>g</sup>qvalue</td>
+                            <td>-The q-value of a test measures the proportion of false positives incurred (called the false discovery rate) when that particular test is called significant.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>h</sup>meth.diff</td>
+                            <td>-Methylation degree of loci.</td>
+                        </tr>
+                        <tr>
+                            <td><sup>i</sup>More</td>
+                            <td>-click on <i>view in jBrowse</i> so that you can turn to the genome browse to see this methylation site.</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+    </div>
+</div>
+    {% endif %}
+</div>
+{%endblock%}
+{% if 'all_geneID' in type %}
+{% block script %}
+        <script type="text/javascript">
+      var jsonData = $.ajax({
+        url: '/json/search/type={% if "_all" in type %}diff_geneID_all{%else%}diff_geneID{%endif%}/input={{input}}',
+        dataType: 'json',
+      }).done(function (results) {
+
+        var labels = [], data=[];
+        for(var gene in results)
+        {
+            labels.push(results[gene].diff+'.'+results[gene].GSE);
+            data.push(parseFloat(results[gene].logFC));
+        }
+
+        var tempData = {
+          labels : labels,
+          datasets : [{
+              label: "logFoldChange",
+                backgroundColor: '#8470FF',
+                data:data,
+          }]
+        };
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myLineChart = new Chart(ctx, {
+            type: 'bar', 
+            data: tempData,
+            options: {
+                title: 
+                {
+                display: true,
+                text: 'Expression Level of {{input}} in Differentially Expressed Comparative Groups',
+                }
+            }
+        });
+      });
+      var jsonData1 = $.ajax({
+        url: '/json/search/rate/input={{input}}',
+        dataType: 'json',
+      }).done(function (results) {
+
+        var tempData = {
+          labels : ["adj.P.Val < 0.05","adj.P.Val ≥ 0.05"],
+          datasets : [{
+                backgroundColor: ['#FF4500','#DBDBDB'],
+                data:[parseFloat(results[0].diff),parseFloat(results[0].all)-parseFloat(results[0].diff)],
+          }]
+        };
+        var ctx = document.getElementById('myChart1').getContext('2d');
+        var myLineChart = new Chart(ctx, {
+            type: 'doughnut', 
+            data: tempData,
+            options: {
+                title: 
+                {
+                display: true,
+                text: 'Significance of Differential Expression of {{input}} in All Comparative Groups',
+                }
+            }
+        });
+      });
+
+        </script>
+{%endblock%}
+{%endif%}
